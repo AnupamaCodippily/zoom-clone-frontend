@@ -1,0 +1,40 @@
+.webcam-controls {
+  position: fixed;
+  width: 100%;
+  bottom: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .controls-inner {
+    border-radius: 5px;
+    background-color: gray;
+    border: solid 5px gray;
+
+    display: flex;
+    gap: 40px;
+    button {
+      color: whitesmoke;
+      cursor: pointer;
+      background-color: rgb(59, 59, 59);
+      border-radius: 5px;
+      height: 44px;
+      width: 44px;
+      border: none;
+
+      &.active-webcam-control {
+        color: greenyellow;
+      }
+
+      &.inactive-webcam-control {
+        color: grey;
+      }
+
+      &:hover {
+        color: white;
+        transition-duration: .3s;
+        transition-timing-function: ease;
+      }
+    }
+  }
+}
