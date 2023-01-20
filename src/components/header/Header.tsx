@@ -1,6 +1,6 @@
 const Header: React.FC = () => {
   return (
-    <div>
+    <div className="header">
         Classroom number : 
     </div>
   )
