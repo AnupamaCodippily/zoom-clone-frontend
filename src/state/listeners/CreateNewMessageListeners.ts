@@ -11,7 +11,7 @@ newMessageListenerMiddleware.startListening({
 
         listenerApi.cancelActiveListeners()
 
-        const {message, username} = action.payload;
+        // const {message, username} = action.payload;
 
         // emitMessageToServer(username, message);
     }
