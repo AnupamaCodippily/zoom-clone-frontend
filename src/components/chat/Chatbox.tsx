@@ -12,8 +12,8 @@ const Chatbox :React.FC = () => {
   function handleCreateMessage(event: FormEvent) {
 
     event.preventDefault();
-
-    const result = dispatch(api.endpoints.sendMessage.initiate({ username, body: message}))
+    
+    dispatch(api.endpoints.sendMessage.initiate({ username, body: message}))
 
     setMessage(_ => "")
   }
