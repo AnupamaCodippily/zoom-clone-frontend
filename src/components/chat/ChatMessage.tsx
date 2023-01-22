@@ -7,8 +7,8 @@ export interface IChatMessageComponent {
 
 const ChatMessage: React.FC<IChatMessageComponent> = ({ senderName, chatMessage }) => {
   return (
-    <div>
-      <span>{senderName}</span>
+    <div className='chat-message'>
+      <span className='sender-name'>{senderName}</span>
       <div>
         {chatMessage}
       </div>
