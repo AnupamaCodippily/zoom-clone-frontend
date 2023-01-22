@@ -1,6 +1,6 @@
 export default interface IChatMessage {
     id: string;
     username: string;
-    message: string;
+    body: string;
     roomId: string;
 }
