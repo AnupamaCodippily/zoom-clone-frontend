@@ -5,7 +5,7 @@ export async function setupSelfMediaVideoOnly(
   const localStream = store.getState().room.selfCameraStream;
 
   if (localStream !== null) {
-    localStream.getTracks().forEach((track) => {
+    localStream.getTracks().forEach((track:MediaStreamTrack) => {
       if (localStream != null)
         return peerConnection.addTrack(track, localStream);
     });
@@ -18,7 +18,7 @@ export async function setupSelfMediaVideoAndAudioOnly(
   const localStream = store.getState().room.selfCameraStream;
 
   if (localStream !== null) {
-    localStream.getTracks().forEach((track) => {
+    localStream.getTracks().forEach((track:MediaStreamTrack) => {
       if (localStream != null)
         return peerConnection.addTrack(track, localStream);
     });

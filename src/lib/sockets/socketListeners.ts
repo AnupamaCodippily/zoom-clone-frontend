@@ -1,8 +1,11 @@
 import { Socket } from "socket.io-client";
 
-function setupOnReceiveMessageInRoom (socket: Socket) {
-    socket.on('new-message-from-server-to-room', (...args) => {
+function setupOnReceiveMessageInRoom (socket: Socket, updateCachedDataMethod: any) {
+    socket.on('server-send-messages-to-clients', (...args) => {
+        debugger;
         console.log(args)
+
+        updateCachedDataMethod('asdasd');
     })
 }
 
