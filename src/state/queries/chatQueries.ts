@@ -1,40 +1,38 @@
-import { createApi, fetchBaseQuery, QueryDefinition } from "@reduxjs/toolkit/query/react";
-import { ZOOM_CLONE_SERVER_ROOM_BASE_URL } from "../../lib/constants/urls";
+import { createSelector } from "@reduxjs/toolkit";
+import {
+  createApi,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
+import {
+  ZOOM_CLONE_SERVER_ROOM_BASE_URL,
+  ZOOM_CLONE_SERVER_URL,
+} from "../../lib/constants/urls";
 import setupSocketIOForMessages, {
   ISocket,
   setupSocketListeners,
 } from "../../lib/sockets/setupSocketIO";
+import IChatMessage from "../../types/Message";
 
 export type Room = string;
 
-export interface Message {
-  id: number;
-  roomId: Room;
-  userName: string;
-  text: string;
-}
-
 export const api: any = createApi({
-  reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: ZOOM_CLONE_SERVER_ROOM_BASE_URL }),
+  reducerPath: "api",
+  baseQuery: fetchBaseQuery({ baseUrl: ZOOM_CLONE_SERVER_URL }),
   endpoints: (build) => ({
-    getMessages: build.query<Message[], Room>({
-      query: (roomId) => `/`,
+    getMessages: build.query<IChatMessage[] | null, Room>({
+      queryFn: async () => ({data: null}),
       async onCacheEntryAdded(
         arg,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
-        console.log(1)
         // create a websocket connection when the cache subscription starts (here we use socket.io)
         const socket: ISocket = setupSocketIOForMessages();
         try {
           // wait for the initial query to resolve before proceeding
           await cacheDataLoaded;
           setupSocketListeners(socket, updateCachedData);
-
-          console.log(socket)
-        } catch  {
-          console.log(2)
+        } catch {
+          console.log('An error occured when setting up a socket');
           // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,
           // in which case `cacheDataLoaded` will throw
         }
@@ -45,14 +43,14 @@ export const api: any = createApi({
       },
     }),
 
-    sendMessage: build.mutation<Message, string>({
-      queryFn: (chatMessageContent: string) => {
+    sendMessage: build.mutation<any, IChatMessage>({
+      queryFn: (chatMessageContent: IChatMessage) => {
         const socket = setupSocketIOForMessages();
         return new Promise((resolve) => {
           socket.emit(
             "client-send-message-to-server",
             chatMessageContent,
-            (message: Message) => {
+            (message: IChatMessage) => {
               resolve({ data: message });
             }
           );
@@ -62,5 +60,17 @@ export const api: any = createApi({
   }),
 });
 
-
 export const selectMessagesResult = api.endpoints.getMessages.select();
+
+const selectMessagesData = createSelector(
+  selectMessagesResult,
+  (messagesResult) => messagesResult.data ?? []
+);
+
+// export const fetchNotificationsWebsocket = () => (dispatch, getState) => {
+//   const allNotifications = selectMessagesData(getState())
+//   // const [latestNotification] = allNotifications
+//   // const latestTimestamp = latestNotification?.date ?? ''
+//   // Hardcode a call to the mock server to simulate a server push scenario over websockets
+//   // forceGenerateNotifications(latestTimestamp)
+// }

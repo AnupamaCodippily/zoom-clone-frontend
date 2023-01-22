@@ -10,10 +10,10 @@ interface IChatListComponent {
 const ChatList: React.FC<IChatListComponent> = ({ messages = [] }) => {
 
   const dispatch = useDispatch();
-
+  const x = api.endpoints.getMessages.useQuery('blah');
   useEffect(() => {
-    dispatch(api.endpoints.getMessages.select('test-room'));
-  }, []);
+  console.log(x)
+  }, [x]);
 
   return (
     <div className='chat-list'>

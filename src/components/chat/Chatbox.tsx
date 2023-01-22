@@ -4,6 +4,7 @@ import { api } from '../../state/queries/chatQueries'
 
 const Chatbox :React.FC = () => {
 
+  const username = 'test user'
   const [message, setMessage] = useState('');
 
   const dispatch = useDispatch();
@@ -12,10 +13,8 @@ const Chatbox :React.FC = () => {
 
     event.preventDefault();
 
-    const result = dispatch(api.endpoints.sendMessage.initiate(message))
-    console.log(message)
+    const result = dispatch(api.endpoints.sendMessage.initiate({ username, body: message}))
 
-    console.log(api.endpoints)
     setMessage(_ => "")
   }
 
