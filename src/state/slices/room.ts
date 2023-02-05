@@ -37,22 +37,27 @@ export const roomSlice = createSlice({
     },
     setCamOn: (state, action: PayloadAction<boolean>) => {
       state.isCamOn = action.payload;
+      if (state.isScreenShared && action.payload) {
+        state.isScreenShared = false;
+      }
     },
     setLocalCam: (state, action: PayloadAction<MediaStream | null>) => {
-      if (!action.payload) {
+      // if (!action.payload) {
         state.selfCameraStream?.getTracks().forEach(function (track) {
           track.stop();
         });
+      // }
+      if (action.payload != null) {
+        state.isScreenShared = false;
       }
-
       state.selfCameraStream = action.payload;
     },
     setLocalDisplayStream: (state, action: PayloadAction<MediaStream | null>) => {
-      if (!action.payload) {
+      // if (!action.payload) {
         state.selfCameraStream?.getTracks().forEach(function (track) {
           track.stop();
         });
-      }
+      // }
       state.isScreenShared = (action.payload != null)
       state.selfCameraStream = action.payload;
     },

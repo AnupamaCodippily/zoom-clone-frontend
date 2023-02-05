@@ -1,3 +1,4 @@
+import {  setLocalDisplayStream } from "../../state/slices/room";
 import { store } from "../../state/store";
 export async function setupSelfMediaVideoOnly(
   peerConnection: RTCPeerConnection
@@ -35,7 +36,13 @@ export async function getLocalStream(): Promise<MediaStream> {
 }
 
 export async function getLocalStreamWithScreen(): Promise<MediaStream> {
-  const localStream = await navigator.mediaDevices.getDisplayMedia({ audio: false});
+  const localStream = await navigator.mediaDevices.getDisplayMedia({
+    audio: false,
+  });
+
+  localStream.getVideoTracks()[0].onended = () => {
+    store.dispatch(setLocalDisplayStream(null))
+  }
 
   return localStream;
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { getLocalStream, getLocalStreamWithScreen } from '../../../lib/webrtc/setup-media-sources'
-import { setLocalCam, setLocalDisplayStream } from '../../../state/slices/room'
+import { setCamOn, setLocalCam, setLocalDisplayStream } from '../../../state/slices/room'
 import { RootState, store } from '../../../state/store'
 
 interface WebcamControlsProps {
@@ -30,6 +30,7 @@ const WebcamControls : React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
     if (!screenShareEnabled) {
       const localStreamSrc = await getLocalStreamWithScreen();
       store.dispatch(setLocalDisplayStream(localStreamSrc))
+      store.dispatch(setCamOn(false))
     } else {
       store.dispatch(setLocalDisplayStream(null))
     }
