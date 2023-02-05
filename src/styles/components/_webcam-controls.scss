@@ -1,33 +1,34 @@
 .webcam-controls {
   position: fixed;
   width: 100%;
-  bottom: 3rem;
+  bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
 
   .controls-inner {
     border-radius: 5px;
-    background-color: gray;
-    border: solid 5px gray;
-
+    background-color: var(--secondary-foreground);
+    padding: 13px;
     display: flex;
     gap: 40px;
     button {
-      color: whitesmoke;
+      color: rgb(118, 115, 115);
       cursor: pointer;
-      background-color: rgb(59, 59, 59);
+      background-color: white;
       border-radius: 5px;
-      height: 44px;
-      width: 44px;
+      height: 74px;
+      width: 90px;
       border: none;
+      font-size: 11px;
 
       &.active-webcam-control {
-        color: greenyellow;
+        background-color: var(--main-foreground);
+        color: white;
       }
 
       &.inactive-webcam-control {
-        color: grey;
+
       }
 
       &:hover {
@@ -35,6 +36,8 @@
         transition-duration: .3s;
         transition-timing-function: ease;
       }
+
+ 
     }
   }
 }

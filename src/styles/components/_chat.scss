@@ -1,55 +1,94 @@
 .chat-panel-container {
+  display: flex;
+  flex-direction: column;
+
+    .chat-header {
+        color: var(--main-foreground);
+        display: flex;
+        height: 30px;
+        flex-direction: row;
+        font-size: 12px;
+
+        .chat-heading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top-left-radius: 5px;
+            width: 50%;
+            background-color: var(--secondary-foreground);
+        }
+
+        .chat-headcount {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        border-bottom: solid 1px var(--secondary-foreground);
+    }
+
+  .chat-panel {
+    position: fixed;
+    right: 60px;
+    border-radius: 5px;
+    top: 6.0vh;
+    height: 80vh;
+    min-width: 200px;
+    background-color: white;
     display: flex;
     flex-direction: column;
 
-    .chat-panel {
-        position: fixed;
-        right: 0;
-        top: 0;
-        height: 100vh;
-        min-width: 220px;
-        background-color: rgb(17, 17, 17);
-        display: flex;
-        flex-direction: column;
-        padding: 40px;
-    
-        .chat-list {
-            min-height: 80%;
-            max-height: 80%;
-            overflow-y: scroll;
+    .chat-list {
+      min-height: 80%;
+      max-height: 80%;
+      overflow-y: scroll;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
 
-            .chat-message {
-                background-color: rgb(12, 12, 162);
-                color: white;
-                padding: 10px;
-                border-radius: 10px;
-                margin-bottom: 12px;
-                max-width: max-content;
+      .chat-message {
+        background-color: rgb(12, 12, 162);
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        max-width: max-content;
 
-                .sender-name {
-                    font-size: xx-small;
-                }
-            }
+        .sender-name {
+          font-size: xx-small;
         }
 
-        .chat-box {
-            background-color: rgb(17, 17, 17);
-            border: solid 1px rgb(131, 131, 131);
-            border-radius: 12px;
-            position: fixed;
-            bottom: 20px;
-
-            input {
-                border-radius: 12px;
-                background-color: rgb(17, 17, 17);
-                border: none;
-                color: whitesmoke;
-                min-height: 40px;
-            }
-
-            input[type='submit'] {
-                background-color: rgb(46, 46, 179);
-            }
+        &.from-me {
+          border-bottom-right-radius: 0;
+          right: 0;
         }
+
+        &.from-other {
+          border-bottom-left-radius: 0;
+          align-self: flex-start;
+          background-color: rgb(30, 30, 30);
+        }
+      }
     }
+
+    .chat-box {
+      background-color: rgb(17, 17, 17);
+      border: solid 1px rgb(131, 131, 131);
+      border-radius: 12px;
+      position: fixed;
+      bottom: 20px;
+
+      input {
+        border-radius: 12px;
+        background-color: rgb(17, 17, 17);
+        border: none;
+        color: black;
+        min-height: 40px;
+      }
+
+      input[type="submit"] {
+        background-color: rgb(46, 46, 179);
+      }
+    }
+  }
 }

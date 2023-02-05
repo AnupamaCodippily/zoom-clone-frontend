@@ -1,2 +1,8 @@
 @import url(_body.scss);
 @import url(_video.scss);
+
+:root {
+    --main-foreground : #5C0087;
+    --secondary-foreground: rgba(92, 0, 135, .15);
+    --secondary-background: rgb(244, 238, 247);
+}
