@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { getLocalStream } from '../../../lib/webrtc/setup-media-sources'
-import { setLocalCam } from '../../../state/slices/room'
+import { getLocalStream, getLocalStreamWithScreen } from '../../../lib/webrtc/setup-media-sources'
+import { setLocalCam, setLocalDisplayStream } from '../../../state/slices/room'
 import { RootState, store } from '../../../state/store'
 
 interface WebcamControlsProps {
@@ -13,7 +13,7 @@ const WebcamControls : React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
 
   const isMuted = useSelector((state: RootState) => state.room.isMuted)
   const enableCam = useSelector((state: RootState) => state.room.isCamOn)
-
+  const screenShareEnabled = useSelector((state: RootState) => state.room.isScreenShared)
 
   async function handleClickWebcamButton () {
     if (!enableCam) {
@@ -26,6 +26,15 @@ const WebcamControls : React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
     turnOn();
   }
 
+  async function handleClickScreenShare() {
+    if (!screenShareEnabled) {
+      const localStreamSrc = await getLocalStreamWithScreen();
+      store.dispatch(setLocalDisplayStream(localStreamSrc))
+    } else {
+      store.dispatch(setLocalDisplayStream(null))
+    }
+  }
+
   return (
     <div className='webcam-controls'>
       <div className='controls-inner'>
@@ -34,6 +43,9 @@ const WebcamControls : React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
         </button>
         <button className={'turn-on-video' + ( isMuted ? " active-webcam-control" : " inactive-webcam-control" )} onClick={() => micOn()}>
             Mic
+        </button>
+        <button className={'turn-on-video' + ( isMuted ? " active-webcam-control" : " inactive-webcam-control" )} onClick={() => handleClickScreenShare()}>
+            Share screen
         </button>
       </div>
     </div>

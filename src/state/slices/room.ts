@@ -47,6 +47,15 @@ export const roomSlice = createSlice({
 
       state.selfCameraStream = action.payload;
     },
+    setLocalDisplayStream: (state, action: PayloadAction<MediaStream | null>) => {
+      if (!action.payload) {
+        state.selfCameraStream?.getTracks().forEach(function (track) {
+          track.stop();
+        });
+      }
+      state.isScreenShared = (action.payload != null)
+      state.selfCameraStream = action.payload;
+    },
     addParticipant: (state, action: PayloadAction<Participant>) => {
       state.participants.push(action.payload);
     },
@@ -66,6 +75,7 @@ export const {
   setMuted,
   setCamOn,
   setLocalCam,
+  setLocalDisplayStream
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

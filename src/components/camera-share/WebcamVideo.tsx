@@ -4,13 +4,14 @@ import { RootState } from '../../state/store';
 import WebcamControls from './webcam-controls/WebcamControls';
 import WebcamOff from './WebcamOff';
 import WebcamOn from './WebcamOn';
-import {setCamOn, setMuted} from '../../state/slices/room'
+import {setCamOn, setLocalDisplayStream, setMuted} from '../../state/slices/room'
 
 
 const WebcamVideo: React.FC = () => {
 
   const isWebcamOn = useSelector((state: RootState) => state.room.isCamOn )
   const isMuted = useSelector((state: RootState) => state.room.isMuted )
+  const isScreenShared = useSelector((state: RootState) => state.room.isScreenShared )
 
   const dispatch = useDispatch();
 
@@ -25,7 +26,7 @@ const WebcamVideo: React.FC = () => {
   return (
     <div className='webcam webcam-container'>
         {
-            isWebcamOn ? <WebcamOn/> : <WebcamOff/>
+            (isWebcamOn || isScreenShared) ? <WebcamOn/> : <WebcamOff/>
         }
         <WebcamControls turnOn={() => setWebcamOn(!isWebcamOn)} micOn={() => setMicOn(!isMuted)} />
     </div>

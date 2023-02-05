@@ -5,7 +5,7 @@ export async function setupSelfMediaVideoOnly(
   const localStream = store.getState().room.selfCameraStream;
 
   if (localStream !== null) {
-    localStream.getTracks().forEach((track:MediaStreamTrack) => {
+    localStream.getTracks().forEach((track: MediaStreamTrack) => {
       if (localStream != null)
         return peerConnection.addTrack(track, localStream);
     });
@@ -18,7 +18,7 @@ export async function setupSelfMediaVideoAndAudioOnly(
   const localStream = store.getState().room.selfCameraStream;
 
   if (localStream !== null) {
-    localStream.getTracks().forEach((track:MediaStreamTrack) => {
+    localStream.getTracks().forEach((track: MediaStreamTrack) => {
       if (localStream != null)
         return peerConnection.addTrack(track, localStream);
     });
@@ -34,8 +34,16 @@ export async function getLocalStream(): Promise<MediaStream> {
   return localStream;
 }
 
+export async function getLocalStreamWithScreen(): Promise<MediaStream> {
+  const localStream = await navigator.mediaDevices.getDisplayMedia({ audio: false});
 
-export async function getLocalStreamVideoAndAudio(videoOn: boolean, audioOn: boolean): Promise<MediaStream> {
+  return localStream;
+}
+
+export async function getLocalStreamVideoAndAudio(
+  videoOn: boolean,
+  audioOn: boolean
+): Promise<MediaStream> {
   const localStream = await navigator.mediaDevices.getUserMedia({
     video: videoOn,
     audio: audioOn,
