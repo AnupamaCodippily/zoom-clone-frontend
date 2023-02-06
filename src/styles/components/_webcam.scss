@@ -4,27 +4,39 @@ video {
 
 .webcam {
   background-color: black;
+  
+  .webcam-video-container {
+    border-radius: 5px;
+    position: relative;
+    width: 80%;
+    height: 80%;
+    border: solid 4px red;
+  }
 }
 
-.webcam-on, .webcam-off {
-  height: 70%;
-  position: fixed;
+.webcam-on,
+.webcam-off {
+  height: 100%;
+  // position: fixed;
   left: 120px;
   top: 40px;
-  width: 60% !important;
+  width: 100% !important;
 }
 
 .webcam-container {
-  width: 70%;
-  min-height: 600px;
+  position: relative;
+  padding-top: 30px;
+  margin-top: 40px;
+  width: 80%;
+  min-height: 90%;
+  height: 90%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background-color: var(--secondary-background);
   margin-left: 100px;
 
   .webcam-main {
-    width: 80%;
     border: solid 3px rgb(72, 68, 68);
 
     video {

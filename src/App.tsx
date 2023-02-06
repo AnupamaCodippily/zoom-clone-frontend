@@ -5,7 +5,7 @@ import RoomView from './views/room/RoomView';
 function App() {
   return (
     <div className="App">
-      <Header/>
+      {/* <Header/> */}
       <RoomView>
         <div>hi</div>
       </RoomView>

@@ -8,24 +8,25 @@ const WebcamOn = () => {
     (state: RootState) => state.room.isMainPresenter
   );
   // const localStreamSrc = useSelector((state: RootState) => state.room.)
-  
-  const localStreamSrc = useSelector((state:RootState) => state.room.selfCameraStream)
+
+  const localStreamSrc = useSelector(
+    (state: RootState) => state.room.selfCameraStream
+  );
 
   const videoRef = useRef<any>(null);
 
   useEffect(() => {
-    if (videoRef?.current)
-    videoRef.current.srcObject = localStreamSrc
+    if (videoRef?.current) videoRef.current.srcObject = localStreamSrc;
   }, []);
 
   return (
-    <video
-      ref={videoRef}
-      muted={isSelfMuted}
-      autoPlay
-      playsInline
-      className={"webcam-on" + (isMainPresenter ? " webcam-main" : "")}
-    />
+      <video
+        ref={videoRef}
+        muted={isSelfMuted}
+        autoPlay
+        playsInline
+        className={"webcam-on" + (isMainPresenter ? " webcam-main" : "")}
+      />
   );
 };
 
