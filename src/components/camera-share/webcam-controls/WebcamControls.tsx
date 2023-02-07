@@ -10,6 +10,10 @@ import {
   setLocalDisplayStream,
 } from "../../../state/slices/room";
 import { RootState, store } from "../../../state/store";
+import camIcon from '../../../assets/icons/video-cam-icon.png'
+import micIcon from '../../../assets/icons/mic-icon-1.png'
+import screenshareIcon from '../../../assets/icons/screenshare-icon.png'
+import endCallIcon from '../../../assets/icons/end-call-icon-9.jpg'
 
 interface WebcamControlsProps {
   turnOn: () => void;
@@ -54,7 +58,7 @@ const WebcamControls: React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
           }
           onClick={handleClickWebcamButton}
         >
-          Video
+          <img src={camIcon} alt="camera icon"/>
         </button>
         <button
           className={
@@ -63,7 +67,7 @@ const WebcamControls: React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
           }
           onClick={() => micOn()}
         >
-          Mic
+          <img src={micIcon} alt='mic icon'/>
         </button>
         <button
           className={
@@ -74,10 +78,10 @@ const WebcamControls: React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
           }
           onClick={() => handleClickScreenShare()}
         >
-          Share screen
+          <img src={ screenshareIcon} alt='screen share icon' />
         </button>
         <button className="active-webcam-control end-meeting-button">
-          <img src="" alt="end meeting" />{" "}
+          <img src={endCallIcon} alt="end meeting" />{" "}
         </button>
       </div>
     </div>
