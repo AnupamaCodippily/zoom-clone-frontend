@@ -20,6 +20,7 @@ video {
   left: 120px;
   top: 40px;
   width: 100% !important;
+  box-shadow: 0px 0px 15px 1px rgba(99, 0, 225, 0.13);
 }
 
 .webcam-container {
@@ -32,7 +33,7 @@ video {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  background-color: var(--secondary-background);
+  background-color: white;
   margin-left: 100px;
 
   .webcam-main {
