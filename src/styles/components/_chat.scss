@@ -1,45 +1,54 @@
 .chat-panel-container {
   display: flex;
   flex-direction: column;
+  .chat-header {
+    color: var(--main-foreground);
+    display: flex;
+    height: 30px;
+    flex-direction: row;
+    font-size: 12px;
 
-    .chat-header {
-        color: var(--main-foreground);
-        display: flex;
-        height: 30px;
-        flex-direction: row;
-        font-size: 12px;
-
-        .chat-heading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-top-left-radius: 5px;
-            width: 50%;
-            background-color: var(--secondary-foreground);
-        }
-
-        .chat-headcount {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        border-bottom: solid 1px var(--secondary-foreground);
+    .chat-heading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top-left-radius: 5px;
+      width: 50%;
+      background-color: var(--secondary-foreground);
     }
+
+    .chat-headcount {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    border-bottom: solid 1px var(--secondary-foreground);
+  }
 
   .chat-panel {
     position: fixed;
+    z-index: 11;
     right: 60px;
     border-radius: 5px;
-    top: 6.0vh;
-    height: 80vh;
+    top: 6vh;
     min-width: 200px;
     background-color: white;
     display: flex;
     flex-direction: column;
 
+    .chat-box-outer {
+      background-color: rgba(92, 0, 135, 0.24);
+      min-height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px;
+      border-radius: 0 0 5px 5px;
+    }
+
     .chat-list {
-      min-height: 80%;
+      min-height: 80vh;
       max-height: 80%;
       overflow-y: scroll;
       display: flex;
@@ -72,22 +81,38 @@
     }
 
     .chat-box {
-      background-color: rgb(17, 17, 17);
-      border: solid 1px rgb(131, 131, 131);
-      border-radius: 12px;
-      position: fixed;
-      bottom: 20px;
+      border: none;
+      min-height: auto;
 
-      input {
-        border-radius: 12px;
-        background-color: rgb(17, 17, 17);
-        border: none;
-        color: black;
-        min-height: 40px;
+      .chatbox-input-container {
+        display: flex;
       }
 
-      input[type="submit"] {
-        background-color: rgb(46, 46, 179);
+      input {
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+        border: none;
+        min-height: 30px;
+        padding-left: 10px;
+      }
+
+      button {
+        border-radius: 0;
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+        border: none;
+        color: white;
+        background-color: var(--main-foreground);
+        max-height: 100%;
+        min-width: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+          object-fit: contain;
+          max-height: 20px;
+          min-height: inherit;
+        }
       }
     }
   }
