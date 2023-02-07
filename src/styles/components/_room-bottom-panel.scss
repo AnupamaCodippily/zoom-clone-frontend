@@ -1,0 +1,22 @@
+.room-bottom-panel {
+    position: absolute;
+    background-color: rgba(105, 1, 169, 0.059);
+    min-height: 88px;
+    bottom: 20px;
+    align-self: center;
+    justify-self: center;
+    margin-left: 100px;
+    display: flex;
+    gap: 20px;
+    padding: 13px;
+
+    button {
+        cursor: pointer;
+        background-color: white;
+        border-radius: 5px;
+        height: 70px;
+        width: 100px;
+        border: none;
+        align-self: center;
+    }
+}
