@@ -10,7 +10,6 @@ video {
     position: relative;
     width: 80%;
     height: 80%;
-    border: solid 4px red;
   }
 }
 
@@ -47,10 +46,10 @@ video {
   }
 
   .webcam-on {
-    max-height: 70%;
+    // max-height: 70%;
     video {
       border: solid 4px salmon;
-      height: 70%;
+      // height: 70%;
     }
   }
 
