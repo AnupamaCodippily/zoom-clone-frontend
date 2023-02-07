@@ -1,4 +1,3 @@
-import React from 'react'
 import Chat from '../chat/Chat'
 
 const RoomSidePanel = () => {
