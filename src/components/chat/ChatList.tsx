@@ -18,7 +18,6 @@ const ChatList: React.FC<IChatListComponent> = ({ messages = [] }) => {
 
   return (
     <div className="chat-list">
-      {messagesList.length}
       {messagesList.map((m: IChatMessage) => (
         <ChatMessage chatMessage={m.body} senderName={m.username} />
       ))}
