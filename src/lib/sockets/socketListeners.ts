@@ -25,12 +25,12 @@ function setupOnReceiveMessageInRoom(
 function setupOnReceiveHostPeerId(socket: Socket, _: any) {
   console.log("The host has turned on their webcam");
 
-  if (store.getState()["room"].isHost) {
-    socket.on("server-sent-host-peerId-others", async (args) => {
-     const ls = await getLocalStream();
+  socket.on("server-sent-host-peerId-others", async (args) => {
+    if (store.getState()["room"].isHost) {
+      const ls = await getLocalStream();
       args.clientIds.forEach((id: string) => getPeer().call(id, ls));
-    });
-  }
+    }
+  });
 }
 
 export default [setupOnReceiveMessageInRoom, setupOnReceiveHostPeerId];
