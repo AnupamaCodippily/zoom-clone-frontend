@@ -8,5 +8,5 @@ export function addNewMemberToMeetingWithVideo() {
 export function addHostToMeetingWithVideo() {
     const peer = getPeer();
 
-    setupSocketIOForMessages().emit('host-turned-on-camera', { hostPeerId: peer.id })
+    setupSocketIOForMessages().emit('host-turned-on-camera', { hostPeerId: peer.id, meetingRoomName: 'default-classroom' })
 }
