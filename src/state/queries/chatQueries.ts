@@ -27,7 +27,7 @@ export const api: any = createApi({
           await cacheDataLoaded;
           setupSocketListeners(socket, updateCachedData);
 
-          socket.emit('client-send-message-to-server', { clientId: peer.id, meetingRoomName: 'default-classroom' })
+          socket.emit('client-connected-to-meeting', { clientId: peer.id, meetingRoomName: 'default-classroom' })
         } catch {
           console.log("An error occured when setting up a socket");
           // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,
