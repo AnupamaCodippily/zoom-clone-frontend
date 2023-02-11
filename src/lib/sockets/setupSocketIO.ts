@@ -10,10 +10,11 @@ let clientSocket: ISocket;
 export default function setupSocketIOForMessages() {
   if (!clientSocket) {
     
-    clientSocket = io(ZOOM_CLONE_SERVER_URL, {
+    clientSocket = io(ZOOM_CLONE_SERVER_URL ?? "", {
       // path: '/rooms',
       reconnectionDelayMax: 1000,
       transports: ["websocket", "polling"],
+      secure: true
     });
 
     clientSocket.on('connect', () => console.log(clientSocket))

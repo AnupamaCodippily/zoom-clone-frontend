@@ -10,7 +10,7 @@ export type Room = string;
 
 export const api: any = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: ZOOM_CLONE_SERVER_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: ZOOM_CLONE_SERVER_URL ?? ""}),
   endpoints: (build) => ({
     getMessages: build.query<IChatMessage[] | null, Room>({
       queryFn: async () => ({ data: null }),
