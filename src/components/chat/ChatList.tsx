@@ -1,6 +1,5 @@
 import React, { ReactNode, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { api } from "../../state/queries/chatQueries";
 import { RootState } from "../../state/store";
 import IChatMessage from "../../types/Message";
 import ChatMessage, { IChatMessageComponent } from "./ChatMessage";
@@ -10,7 +9,6 @@ interface IChatListComponent {
 }
 
 const ChatList: React.FC<IChatListComponent> = ({ messages = [] }) => {
-  api.endpoints.getMessages.useQuery("blah");
 
   const messagesList = useSelector(
     (state: RootState) => state.chat.chatMessages
