@@ -1,21 +1,36 @@
 import { Socket } from "socket.io-client";
 import { addMessageToChat } from "../../state/slices/chat";
-import { store } from "../../state/store";
+import { RootState, store } from "../../state/store";
+import { getPeer } from "../webrtc/create-peerjs-connection";
+import { getLocalStream } from "../webrtc/setup-media-sources";
 
-function setupOnReceiveMessageInRoom (socket: Socket, updateCachedDataMethod: any) {
+function setupOnReceiveMessageInRoom(
+  socket: Socket,
+  updateCachedDataMethod: any
+) {
+  console.log("setupOnReceiveMessageInRoom");
 
-    console.log('setupOnReceiveMessageInRoom')
+  socket.on("server-send-messages-to-clients", (args) => {
+    console.log(args);
 
-    socket.on('server-send-messages-to-clients', (args) => {
-        console.log(args)
+    store.dispatch(addMessageToChat(args));
 
-        store.dispatch(addMessageToChat(args))
-
-        // updateCachedDataMethod((draft: any[]) => {
-        //     const { username, body }= args;
-        //     console.log(draft)
-        // });
-    })
+    // updateCachedDataMethod((draft: any[]) => {
+    //     const { username, body }= args;
+    //     console.log(draft)
+    // });
+  });
 }
 
-export default [setupOnReceiveMessageInRoom]
+function setupOnReceiveHostPeerId(socket: Socket, _: any) {
+  console.log("The host has turned on their webcam");
+
+  if (store.getState()["room"].isHost) {
+    socket.on("server-sent-host-peerId-others", async (args) => {
+     const ls = await getLocalStream();
+      args.clientIds.forEach((id: string) => getPeer().call(id, ls));
+    });
+  }
+}
+
+export default [setupOnReceiveMessageInRoom, setupOnReceiveHostPeerId];

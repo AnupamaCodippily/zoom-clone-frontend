@@ -1,4 +1,6 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { setAsHost } from "../../state/slices/room";
 interface RoomBottomPanelProps {
   toggleEnabledChat: () => void;
   chatEnabled: boolean;
@@ -8,8 +10,11 @@ const RoomBottomPanel: React.FC<RoomBottomPanelProps> = ({
   toggleEnabledChat,
   chatEnabled,
 }) => {
+  const dispatch = useDispatch();
 
-    
+  const copyInviteToCliboard = () => {
+    dispatch(setAsHost(true));
+  };
 
   return (
     <div className="room-bottom-panel">
@@ -22,7 +27,12 @@ const RoomBottomPanel: React.FC<RoomBottomPanelProps> = ({
       >
         Chat
       </button>
-      <button className="room-bottom-panel-action room-bottom-invite-button">Invite</button>
+      <button
+        className="room-bottom-panel-action room-bottom-invite-button"
+        onClick={copyInviteToCliboard}
+      >
+        Invite
+      </button>
     </div>
   );
 };

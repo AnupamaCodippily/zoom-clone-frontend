@@ -4,6 +4,7 @@ import setupSocketIOForMessages, {
   ISocket,
   setupSocketListeners,
 } from "../../lib/sockets/setupSocketIO";
+import { getPeer } from "../../lib/webrtc/create-peerjs-connection";
 import IChatMessage from "../../types/Message";
 
 export type Room = string;
@@ -20,10 +21,13 @@ export const api: any = createApi({
       ) {
         // create a websocket connection when the cache subscription starts (here we use socket.io)
         const socket: ISocket = setupSocketIOForMessages();
+        const peer = getPeer();
         try {
           // wait for the initial query to resolve before proceeding
           await cacheDataLoaded;
           setupSocketListeners(socket, updateCachedData);
+
+          socket.emit('client-send-message-to-server', { clientId: peer.id, meetingRoomName: 'default-classroom' })
         } catch {
           console.log("An error occured when setting up a socket");
           // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,

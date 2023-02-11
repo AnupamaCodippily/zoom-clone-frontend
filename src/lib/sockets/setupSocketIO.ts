@@ -1,6 +1,5 @@
 import { io, Socket } from "socket.io-client";
 import {
-  ZOOM_CLONE_SERVER_ROOM_BASE_URL,
   ZOOM_CLONE_SERVER_URL,
 } from "../constants/urls";
 import socketListeners from "./socketListeners";

@@ -10,6 +10,7 @@ export interface RoomState {
   isScreenShared: boolean;
   selfCameraStream: MediaStream | null;
   participants: Participant[];
+  displayingRemoteStream: boolean;
 }
 
 const initialState: RoomState = {
@@ -20,6 +21,7 @@ const initialState: RoomState = {
   isScreenShared: false,
   selfCameraStream: null,
   participants: [],
+  displayingRemoteStream: false
 };
 
 export const roomSlice = createSlice({
@@ -40,6 +42,12 @@ export const roomSlice = createSlice({
       if (state.isScreenShared && action.payload) {
         state.isScreenShared = false;
       }
+    },
+    setDisplayingRemoteStream: (state, action: PayloadAction<boolean>) => {
+      state.displayingRemoteStream = action.payload;
+
+      state.isCamOn = false;
+      state.isScreenShared = false;
     },
     setLocalCam: (state, action: PayloadAction<MediaStream | null>) => {
       // if (!action.payload) {
@@ -80,7 +88,8 @@ export const {
   setMuted,
   setCamOn,
   setLocalCam,
-  setLocalDisplayStream
+  setLocalDisplayStream,
+  setDisplayingRemoteStream,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;
