@@ -1,10 +1,9 @@
-import { randomUUID } from "crypto";
 import Peer from "peerjs";
 import { store } from "../../state/store";
 import { getLocalStream } from "./setup-media-sources";
-
+import uuid from 'uuid';
 let clientPeer: Peer | null = null;
-export let peerId = randomUUID();
+export let peerId = uuid.v4();
 
 export function getPeer() {
   if (clientPeer) return clientPeer;
