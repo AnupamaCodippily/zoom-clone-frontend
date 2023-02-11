@@ -8,7 +8,6 @@ export function getPeer() {
     if (clientPeer) return clientPeer;
 
     clientPeer = new Peer()
-    console.log(clientPeer)
     clientPeer.on('call', async (call) => {
         if (!store.getState().room.isHost) {
             const ls = await getLocalStream();

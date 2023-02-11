@@ -26,7 +26,7 @@ export const api: any = createApi({
           // wait for the initial query to resolve before proceeding
           await cacheDataLoaded;
           setupSocketListeners(socket, updateCachedData);
-
+          console.log(peer)
           socket.emit('client-connected-to-meeting', { clientId: peer.id, meetingRoomName: 'default-classroom' })
         } catch {
           console.log("An error occured when setting up a socket");
