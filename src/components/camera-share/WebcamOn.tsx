@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useSelector, useStore } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 
 const WebcamOn = () => {
@@ -16,17 +16,20 @@ const WebcamOn = () => {
   const videoRef = useRef<any>(null);
 
   useEffect(() => {
-    if (videoRef?.current) videoRef.current.srcObject = localStreamSrc;
+    if (videoRef?.current) {
+      videoRef.current.srcObject = localStreamSrc;
+      videoRef.current.play();
+    }
   }, [localStreamSrc]);
 
   return (
-      <video
-        ref={videoRef}
-        muted={isSelfMuted}
-        autoPlay
-        playsInline
-        className={"webcam-on" + (isMainPresenter ? " webcam-main" : "")}
-      />
+    <video
+      ref={videoRef}
+      muted={isSelfMuted}
+      autoPlay={true}
+      playsInline={true}
+      className={"webcam-on" + (isMainPresenter ? " webcam-main" : "")}
+    />
   );
 };
 
