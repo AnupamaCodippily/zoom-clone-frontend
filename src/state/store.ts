@@ -12,8 +12,10 @@ export const store = configureStore({
   }),
 
   middleware: (getDefaultMiddleware: CurriedGetDefaultMiddleware<any>) => {
-    return getDefaultMiddleware().concat(api.middleware);
-  }
+    return getDefaultMiddleware({
+      serializableCheck: false,
+    }).concat(api.middleware);
+  },
 });
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
