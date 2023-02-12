@@ -1,7 +1,8 @@
 import Peer from "peerjs";
 import { store } from "../../state/store";
 import { getLocalStream } from "./setup-media-sources";
-import { v4, v5 } from 'uuid';
+import { v4, v5 } from "uuid";
+import { setDisplayingRemoteStream } from "../../state/slices/room";
 let clientPeer: Peer | null = null;
 export let peerId = v4();
 
@@ -15,6 +16,7 @@ export function getPeer() {
       const ls = await getLocalStream();
       alert("Answering call");
       call.answer(ls);
+      store.dispatch(setDisplayingRemoteStream(true));
     }
   });
 
