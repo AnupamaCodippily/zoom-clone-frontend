@@ -17,12 +17,12 @@ export function getPeer() {
   clientPeer.on("call", (call) => {
     if (!store.getState().room.isHost) {
       alert("Answering call");
-      call.on('stream', function (stream) {
+      call.addListener("stream", () =>  alert("asas"));
+      call.on("stream", function (stream) {
         // `stream` is the MediaStream of the remote peer.
         store.dispatch(setRemoteDisplayStream(stream));
         store.dispatch(setDisplayingRemoteStream(true));
       });
-
     }
   });
 
