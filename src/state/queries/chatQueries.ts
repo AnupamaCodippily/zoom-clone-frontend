@@ -21,7 +21,7 @@ export const api: any = createApi({
       ) {
         // create a websocket connection when the cache subscription starts (here we use socket.io)
         const socket: ISocket = setupSocketIOForMessages();
-        const peer = getPeer();
+        getPeer();
         try {
           // wait for the initial query to resolve before proceeding
           await cacheDataLoaded;

@@ -1,8 +1,7 @@
 import { Socket } from "socket.io-client";
 import { addMessageToChat } from "../../state/slices/chat";
-import { RootState, store } from "../../state/store";
+import { store } from "../../state/store";
 import { getPeer } from "../webrtc/create-peerjs-connection";
-import { getLocalStream } from "../webrtc/setup-media-sources";
 
 function setupOnReceiveMessageInRoom(
   socket: Socket,
@@ -27,10 +26,12 @@ function setupOnReceiveHostPeerId(socket: Socket, _: any) {
 
   socket.on("server-sent-host-peerId-others", async (args) => {
     if (store.getState()["room"].isHost) {
-      const ls = await getLocalStream();
-      args.clientIds.forEach((id: string) => getPeer().call(id, ls));
+      const ls = store.getState().room.selfCameraStream;
+      if (ls) args.clientIds.forEach((id: string) => getPeer().call(id, ls));
     }
   });
 }
 
-export default [setupOnReceiveMessageInRoom, setupOnReceiveHostPeerId];
+const allListeners = [setupOnReceiveMessageInRoom, setupOnReceiveHostPeerId];
+
+export default allListeners;

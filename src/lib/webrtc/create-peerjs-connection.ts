@@ -9,8 +9,6 @@ import servers from "../constants/ice-servers";
 let clientPeer: Peer | null = null;
 export let peerId = v4();
 
-let incomingCall = null;
-
 export function getPeer() {
   if (clientPeer) return clientPeer;
 
@@ -19,8 +17,7 @@ export function getPeer() {
   clientPeer.on("call", (call) => {
     if (!store.getState().room.isHost) {
       alert("Answering call");
-      incomingCall = call;
-      incomingCall.on('stream', function (stream) {
+      call.on('stream', function (stream) {
         // `stream` is the MediaStream of the remote peer.
         store.dispatch(setRemoteDisplayStream(stream));
         store.dispatch(setDisplayingRemoteStream(true));

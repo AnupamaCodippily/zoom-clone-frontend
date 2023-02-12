@@ -1,8 +1,8 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 import IChatMessage from "../../types/Message";
-import ChatMessage, { IChatMessageComponent } from "./ChatMessage";
+import ChatMessage from "./ChatMessage";
 
 interface IChatListComponent {
   messages?: ReactNode[];
