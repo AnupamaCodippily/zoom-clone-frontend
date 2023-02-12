@@ -21,7 +21,7 @@ const initialState: RoomState = {
   isScreenShared: false,
   selfCameraStream: null,
   participants: [],
-  displayingRemoteStream: false
+  displayingRemoteStream: false,
 };
 
 export const roomSlice = createSlice({
@@ -51,22 +51,36 @@ export const roomSlice = createSlice({
     },
     setLocalCam: (state, action: PayloadAction<MediaStream | null>) => {
       // if (!action.payload) {
-        state.selfCameraStream?.getTracks().forEach(function (track) {
-          track.stop();
-        });
+      state.selfCameraStream?.getTracks().forEach(function (track) {
+        track.stop();
+      });
       // }
       if (action.payload != null) {
         state.isScreenShared = false;
       }
       state.selfCameraStream = action.payload;
     },
-    setLocalDisplayStream: (state, action: PayloadAction<MediaStream | null>) => {
+    setLocalDisplayStream: (
+      state,
+      action: PayloadAction<MediaStream | null>
+    ) => {
       // if (!action.payload) {
-        state.selfCameraStream?.getTracks().forEach(function (track) {
-          track.stop();
-        });
+      state.selfCameraStream?.getTracks().forEach(function (track) {
+        track.stop();
+      });
       // }
-      state.isScreenShared = (action.payload != null)
+      state.isScreenShared = action.payload != null;
+      state.selfCameraStream = action.payload;
+    },
+    setRemoteDisplayStream: (
+      state,
+      action: PayloadAction<MediaStream | null>
+    ) => {
+      // if (!action.payload) {
+      state.selfCameraStream?.getTracks().forEach(function (track) {
+        track.stop();
+      });
+      // }
       state.selfCameraStream = action.payload;
     },
     addParticipant: (state, action: PayloadAction<Participant>) => {
@@ -90,6 +104,7 @@ export const {
   setLocalCam,
   setLocalDisplayStream,
   setDisplayingRemoteStream,
+  setRemoteDisplayStream,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;
