@@ -17,8 +17,8 @@ export function getPeer() {
   clientPeer.on("call", (call) => {
     if (!store.getState().room.isHost) {
       alert("Answering call");
-      call.addListener("stream", () =>  alert("asas"));
-      call.on("stream", function (stream) {
+      call.answer();
+      call.on("stream", (stream) => {
         // `stream` is the MediaStream of the remote peer.
         store.dispatch(setRemoteDisplayStream(stream));
         store.dispatch(setDisplayingRemoteStream(true));
