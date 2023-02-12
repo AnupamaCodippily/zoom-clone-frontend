@@ -17,7 +17,7 @@ const WebcamOn = () => {
 
   useEffect(() => {
     if (videoRef?.current) videoRef.current.srcObject = localStreamSrc;
-  }, []);
+  }, [localStreamSrc]);
 
   return (
       <video
