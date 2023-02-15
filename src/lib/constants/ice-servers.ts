@@ -5,22 +5,21 @@ const servers = {
     },
     {
       urls: "turn:relay.metered.ca:80",
-      username: "8e360a028e42554dd5f74d4c",
-      credential: "R7ZU/iChDH4jPqHc",
+      username: process.env.REACT_APP_TURN_SERVER_USER,
+      credential: process.env.REACT_APP_TURN_SERVER_CRED,
     },
     {
       urls: "turn:relay.metered.ca:443",
-      username: "8e360a028e42554dd5f74d4c",
-      credential: "R7ZU/iChDH4jPqHc",
+      username: process.env.REACT_APP_TURN_SERVER_USER,
+      credential: process.env.REACT_APP_TURN_SERVER_CRED,
     },
     {
       urls: "turn:relay.metered.ca:443?transport=tcp",
-      username: "8e360a028e42554dd5f74d4c",
-      credential: "R7ZU/iChDH4jPqHc",
+      username: process.env.REACT_APP_TURN_SERVER_USER,
+      credential: process.env.REACT_APP_TURN_SERVER_CRED,
     },
   ],
   iceCandidatePoolSize: 10,
 };
-
 
 export default servers;
