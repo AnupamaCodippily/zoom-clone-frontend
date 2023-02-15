@@ -1,12 +1,14 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import roomReducer from "./slices/room";
 import chatReducer from "./slices/chat";
+import authReducer from "./slices/auth";
 import { CurriedGetDefaultMiddleware } from "@reduxjs/toolkit/dist/getDefaultMiddleware";
 import { api } from "./queries/chatQueries";
 
 export const store = configureStore({
   reducer: combineReducers({
     api: api.reducer,
+    auth: authReducer,
     room: roomReducer,
     chat: chatReducer,
   }),
