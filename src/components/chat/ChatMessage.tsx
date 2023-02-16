@@ -1,4 +1,6 @@
 import React from 'react'
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/store';
 
 export interface IChatMessageComponent {
     chatMessage: string;
@@ -6,8 +8,11 @@ export interface IChatMessageComponent {
 }
 
 const ChatMessage: React.FC<IChatMessageComponent> = ({ senderName, chatMessage }) => {
+
+  const username = useSelector((state: RootState) => state.room.username)
+
   return (
-    <div className={`chat-message from-${senderName === 'test user' ? 'me' : 'other'}`}>
+    <div className={`chat-message from-${senderName === username ? 'me' : 'other'}`}>
       <span className='sender-name'>{senderName}</span>
       <div>
         {chatMessage}

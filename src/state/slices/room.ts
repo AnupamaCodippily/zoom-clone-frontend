@@ -11,6 +11,7 @@ export interface RoomState {
   selfCameraStream: MediaStream | null;
   participants: Participant[];
   displayingRemoteStream: boolean;
+  username: string,
 }
 
 const initialState: RoomState = {
@@ -22,6 +23,7 @@ const initialState: RoomState = {
   selfCameraStream: null,
   participants: [],
   displayingRemoteStream: false,
+  username: 'INVALID_USER',
 };
 
 export const roomSlice = createSlice({
@@ -92,6 +94,10 @@ export const roomSlice = createSlice({
         (participant: Participant) => participant.id !== action.payload.id
       );
     },
+
+    setUsername: (state: RoomState,action :PayloadAction<string>) => {
+      state.username = action.payload;
+    }
   },
 });
 
@@ -105,6 +111,9 @@ export const {
   setLocalDisplayStream,
   setDisplayingRemoteStream,
   setRemoteDisplayStream,
+  addParticipant,
+  removeParticipant,
+  setUsername
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

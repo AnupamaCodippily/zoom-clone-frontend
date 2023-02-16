@@ -2,8 +2,10 @@ import React, { FormEvent, useState } from "react";
 import { useDispatch } from "react-redux";
 import { api } from "../../state/queries/chatQueries";
 import sendIcon from "../../assets/icons/send-msg-icon.png";
+import { store } from "../../state/store";
 const Chatbox: React.FC = () => {
-  const username = "test user";
+
+  const username = store.getState().room.username;
   const [message, setMessage] = useState("");
 
   const dispatch = useDispatch();

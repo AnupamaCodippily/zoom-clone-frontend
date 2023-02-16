@@ -1,5 +1,6 @@
 import { redirect } from "react-router-dom";
 import { setAuthErrorState, setAuthJwtToken } from "../../state/slices/auth";
+import { setUsername } from "../../state/slices/room";
 import { store } from "../../state/store";
 import { ADMIN_LOGIN_URL } from "../constants/urls";
 
@@ -23,6 +24,7 @@ export async function authenticateAdmin(username: string, password: string) {
   if (access_token) {
     store.dispatch(setAuthJwtToken(access_token))
     store.dispatch(setAuthErrorState(false))
+    store.dispatch(setUsername(username))
 
     return new Response("", {
       status: 302,

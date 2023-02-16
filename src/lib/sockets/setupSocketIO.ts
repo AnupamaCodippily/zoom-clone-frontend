@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { store } from "../../state/store";
 import {
   ZOOM_CLONE_SERVER_URL,
 } from "../constants/urls";
@@ -9,11 +10,15 @@ let clientSocket: ISocket;
 export default function setupSocketIOForMessages() {
   if (!clientSocket) {
     
+    const token = store.getState().auth.authJwtToken;
+
     clientSocket = io(ZOOM_CLONE_SERVER_URL ?? "", {
-      // path: '/rooms',
+      // path: '/rooms',q
+      auth: { token: token },
+      query: { token: token },
       reconnectionDelayMax: 1000,
       transports: ["websocket", "polling"],
-      secure: true
+      secure: true,
     });
 
     clientSocket.on('connect', () => console.log(clientSocket))
