@@ -1,3 +1,4 @@
+import { redirect } from "react-router-dom";
 import { setAuthErrorState, setAuthJwtToken } from "../../state/slices/auth";
 import { store } from "../../state/store";
 import { ADMIN_LOGIN_URL } from "../constants/urls";
@@ -22,8 +23,16 @@ export async function authenticateAdmin(username: string, password: string) {
   if (access_token) {
     store.dispatch(setAuthJwtToken(access_token))
     store.dispatch(setAuthErrorState(false))
+
+    return new Response("", {
+      status: 302,
+      headers: {
+        Location: '/classroom/1',
+      },
+    });
   } else {
     store.dispatch(setAuthErrorState(true))
+    return null;
   }
 
 }

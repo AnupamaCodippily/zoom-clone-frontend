@@ -1,15 +1,20 @@
 import { FormEvent, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { authenticateAdmin } from "../../lib/authentication/authenticate-admin";
 
 const LoginView = () => {
   const [adminUsername, setAdminUsername] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
 
-  function attemptAdminSignIn(e: FormEvent) {
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  async function attemptAdminSignIn(e: FormEvent) {
     e.preventDefault()
-    authenticateAdmin(adminUsername, adminPassword);
+    const res: Response | null = await authenticateAdmin(adminUsername, adminPassword);
+    setUserLoggedIn(res != null);
   }
 
+  if (userLoggedIn) return <Navigate to='/classrooms/1' />
   return (
     <div>
       <div>

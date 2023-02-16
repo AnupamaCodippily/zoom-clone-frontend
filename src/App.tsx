@@ -21,7 +21,7 @@ function App() {
               </>
             }
           ></Route>
-          <Route path="/classrooms/:roomId" element={<RoomView/>}/>
+          <Route path="/classrooms/:roomId" element={<RoomView />} />
         </Routes>
       </BrowserRouter>
     </div>
