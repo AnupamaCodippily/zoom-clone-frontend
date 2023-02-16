@@ -3,7 +3,7 @@ import { store } from "../../state/store";
 import { ADMIN_LOGIN_URL } from "../constants/urls";
 
 export async function authenticateAdmin(username: string, password: string) {
-  const basicToken = "Basic " + btoa(username + ":" + password);
+  const basicToken = createBasicToken(username, password);
   console.log(basicToken);
   const authResult = await fetch(ADMIN_LOGIN_URL, {
     method: "post",
@@ -26,4 +26,8 @@ export async function authenticateAdmin(username: string, password: string) {
     store.dispatch(setAuthErrorState(true))
   }
 
+}
+
+function createBasicToken (username: string, password: string) {
+  return "Basic " + btoa(username + ":" + password);
 }
