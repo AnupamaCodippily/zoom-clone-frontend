@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { store } from "../../state/store";
+import { tryFindLocalToken } from "../authentication/local-tokens";
 import {
   ZOOM_CLONE_SERVER_URL,
 } from "../constants/urls";
@@ -10,7 +11,16 @@ let clientSocket: ISocket;
 export default function setupSocketIOForMessages() {
   if (!clientSocket) {
     
-    const token = store.getState().auth.authJwtToken;
+    let token = store.getState().auth.authJwtToken;
+
+    if (!token) {
+      token = tryFindLocalToken();
+
+      if (!token) {
+        console.error('unable to setup messages channel')
+        return;
+      }
+    }
 
     clientSocket = io(ZOOM_CLONE_SERVER_URL ?? "", {
       // path: '/rooms',q

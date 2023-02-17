@@ -27,6 +27,8 @@ export async function authenticateAdmin(username: string, password: string) {
     store.dispatch(setUsername(username))
     store.dispatch(setUserType(UserType.ADMIN))
 
+    localStorage.setItem('admin-access-token', access_token)
+
     return true;
   } else {
     store.dispatch(setAuthErrorState(true))

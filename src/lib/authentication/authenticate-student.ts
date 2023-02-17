@@ -31,6 +31,9 @@ export async function authenticateStudent(username: string, password: string) {
     store.dispatch(setAuthErrorState(false));
     store.dispatch(setUsername(username));
     store.dispatch(setUserType(UserType.STUDENT));
+
+    localStorage.setItem('student-token', access_token)
+    
     return true;
   } else {
     store.dispatch(setAuthErrorState(true));

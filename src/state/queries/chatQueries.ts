@@ -20,11 +20,14 @@ export const api: any = createApi({
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
         // create a websocket connection when the cache subscription starts (here we use socket.io)
-        const socket: ISocket = setupSocketIOForMessages();
+        const socket: ISocket | undefined = setupSocketIOForMessages();
         getPeer();
         try {
           // wait for the initial query to resolve before proceeding
           await cacheDataLoaded;
+
+          if (!socket) throw Error('unable to setup chat');
+
           setupSocketListeners(socket, updateCachedData);
           
           socket.emit('client-connected-to-meeting', { clientId: peerId, meetingRoomName: 'default-classroom' })
@@ -36,7 +39,7 @@ export const api: any = createApi({
         // cacheEntryRemoved will resolve when the cache subscription is no longer active
         await cacheEntryRemoved;
         // perform cleanup steps once the `cacheEntryRemoved` promise resolves
-        socket.close();
+        socket?.close();
       },
     }),
 
@@ -45,7 +48,7 @@ export const api: any = createApi({
         const socket = setupSocketIOForMessages();
 
         return new Promise((resolve) => {
-          socket.emit(
+          socket?.emit(
             "client-send-message-to-server",
             chatMessageContent,
             (message: IChatMessage) => {
