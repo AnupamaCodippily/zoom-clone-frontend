@@ -1,60 +1,37 @@
-import {  setLocalDisplayStream } from "../../state/slices/room";
-import { store } from "../../state/store";
-export async function setupSelfMediaVideoOnly(
-  peerConnection: RTCPeerConnection
-) {
-  const localStream = store.getState().room.selfCameraStream;
+import {
+  MediaStreamData,
+} from "../../state/slices/room";
 
-  if (localStream !== null) {
-    localStream.getTracks().forEach((track: MediaStreamTrack) => {
-      if (localStream != null)
-        return peerConnection.addTrack(track, localStream);
-    });
-  }
-}
-
-export async function setupSelfMediaVideoAndAudioOnly(
-  peerConnection: RTCPeerConnection
-) {
-  const localStream = store.getState().room.selfCameraStream;
-
-  if (localStream !== null) {
-    localStream.getTracks().forEach((track: MediaStreamTrack) => {
-      if (localStream != null)
-        return peerConnection.addTrack(track, localStream);
-    });
-  }
-}
-
-export async function getLocalStream(): Promise<MediaStream> {
-  const localStream = await navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: false,
-  });
-
-  return localStream;
-}
-
-export async function getLocalStreamWithScreen(): Promise<MediaStream> {
-  const localStream = await navigator.mediaDevices.getDisplayMedia({
-    audio: false,
-  });
-
-  localStream.getVideoTracks()[0].onended = () => {
-    store.dispatch(setLocalDisplayStream(null))
-  }
-
-  return localStream;
-}
-
-export async function getLocalStreamVideoAndAudio(
+export async function getLocalMediaStream(
   videoOn: boolean,
-  audioOn: boolean
-): Promise<MediaStream> {
-  const localStream = await navigator.mediaDevices.getUserMedia({
-    video: videoOn,
-    audio: audioOn,
-  });
+  audioOn: boolean,
+  screenshare: boolean
+): Promise<MediaStreamData> {
+  if (videoOn) {
+    const localStream = await navigator.mediaDevices.getUserMedia({
+      video: videoOn,
+      audio: audioOn,
+    });
 
-  return localStream;
+    const result = Object.freeze({
+      audio: audioOn,
+      video: true,
+      screenshare: false,
+      mediaStream: localStream,
+    });
+
+    return result;
+  } else {
+    const localStream = await navigator.mediaDevices.getDisplayMedia({
+      video: false,
+      audio: audioOn,
+    });
+    const result = Object.freeze({
+      audio: audioOn,
+      video: false,
+      screenshare: true,
+      mediaStream: localStream,
+    });
+    return result;
+  }
 }
