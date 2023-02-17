@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { authenticateAdmin } from "../../lib/authentication/authenticate-admin";
+import { authenticateStudent } from "../../lib/authentication/authenticate-student";
 
 const LoginView = () => {
   const [adminUsername, setAdminUsername] = useState("");
@@ -20,9 +21,9 @@ const LoginView = () => {
 
   async function attemptStudentSignIn(e: FormEvent) {
     e.preventDefault();
-    const res: boolean | null = await authenticateAdmin(
-      adminUsername,
-      adminPassword
+    const res: boolean | null = await authenticateStudent(
+      studentUsername,
+      studentPassword
     );
 
     setUserLoggedIn(res);

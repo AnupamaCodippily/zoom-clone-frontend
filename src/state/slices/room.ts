@@ -97,7 +97,8 @@ export const roomSlice = createSlice({
 
     setUsername: (state: RoomState,action :PayloadAction<string>) => {
       state.username = action.payload;
-    }
+    },
+
   },
 });
 

@@ -1,11 +1,12 @@
-import { setAuthErrorState, setAuthJwtToken } from "../../state/slices/auth";
+import { setAuthErrorState, setAuthJwtToken, setUserType } from "../../state/slices/auth";
 import { setUsername } from "../../state/slices/room";
 import { store } from "../../state/store";
 import { ADMIN_LOGIN_URL } from "../constants/urls";
+import { UserType } from "../constants/user-types";
 
 export async function authenticateAdmin(username: string, password: string) {
   const basicToken = createBasicToken(username, password);
-  console.log(basicToken);
+  
   const authResult = await fetch(ADMIN_LOGIN_URL, {
     method: "post",
     body: JSON.stringify({
@@ -24,6 +25,7 @@ export async function authenticateAdmin(username: string, password: string) {
     store.dispatch(setAuthJwtToken(access_token))
     store.dispatch(setAuthErrorState(false))
     store.dispatch(setUsername(username))
+    store.dispatch(setUserType(UserType.ADMIN))
 
     return true;
   } else {
@@ -33,6 +35,9 @@ export async function authenticateAdmin(username: string, password: string) {
 
 }
 
-function createBasicToken (username: string, password: string) {
+
+
+
+export function createBasicToken (username: string, password: string) {
   return "Basic " + btoa(username + ":" + password);
 }
