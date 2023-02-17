@@ -3,6 +3,7 @@ import { store } from "../../state/store";
 import { v4 } from "uuid";
 import { setPlayingMediaStream } from "../../state/slices/room";
 import servers from "../constants/ice-servers";
+
 let clientPeer: Peer | null = null;
 export let peerId = v4();
 
