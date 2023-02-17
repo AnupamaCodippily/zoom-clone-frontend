@@ -3,6 +3,7 @@ import { setUsername } from "../../state/slices/room";
 import { store } from "../../state/store";
 import { ADMIN_LOGIN_URL } from "../constants/urls";
 import { UserType } from "../constants/user-types";
+import { setTypeOfUserInLocalStorage } from "./local-tokens";
 
 export async function authenticateAdmin(username: string, password: string) {
   const basicToken = createBasicToken(username, password);
@@ -28,6 +29,7 @@ export async function authenticateAdmin(username: string, password: string) {
     store.dispatch(setUserType(UserType.ADMIN))
 
     localStorage.setItem('admin-access-token', access_token)
+    setTypeOfUserInLocalStorage(UserType.ADMIN);
 
     return true;
   } else {
