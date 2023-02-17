@@ -1,50 +1,75 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import {
-  getLocalStream,
-  getLocalStreamWithScreen,
-} from "../../../lib/webrtc/setup-media-sources";
-import {
-  setCamOn,
-  setLocalCam,
-  setLocalDisplayStream,
-} from "../../../state/slices/room";
-import { RootState, store } from "../../../state/store";
-import camIcon from '../../../assets/icons/video-cam-icon.png'
-import micIcon from '../../../assets/icons/mic-icon-1.png'
-import screenshareIcon from '../../../assets/icons/screenshare-icon.png'
-import endCallIcon from '../../../assets/icons/end-call-icon-9.jpg'
+import { useDispatch, useSelector } from "react-redux";
+import { getLocalMediaStream } from "../../../lib/webrtc/setup-media-sources";
+import { setPlayingMediaStream } from "../../../state/slices/room";
+import { RootState } from "../../../state/store";
+import camIcon from "../../../assets/icons/video-cam-icon.png";
+import micIcon from "../../../assets/icons/mic-icon-1.png";
+import screenshareIcon from "../../../assets/icons/screenshare-icon.png";
+import endCallIcon from "../../../assets/icons/end-call-icon-9.jpg";
 
-interface WebcamControlsProps {
-  turnOn: () => void;
-  micOn: () => void;
-}
-
-const WebcamControls: React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
+const WebcamControls: React.FC = () => {
   const isMuted = useSelector((state: RootState) => state.room.isMuted);
   const enableCam = useSelector((state: RootState) => state.room.isCamOn);
   const screenShareEnabled = useSelector(
     (state: RootState) => state.room.isScreenShared
   );
 
+  const dispatch = useDispatch();
+
   async function handleClickWebcamButton() {
     if (!enableCam) {
-      const localStreamSrc = await getLocalStream();
-      store.dispatch(setLocalCam(localStreamSrc));
+      const mediaStreamData = await getLocalMediaStream(true, !isMuted, false);
+
+      dispatch(setPlayingMediaStream(mediaStreamData));
     } else {
-      store.dispatch(setLocalCam(null));
+      const mediaStreamData = await getLocalMediaStream(
+        false,
+        !isMuted,
+        screenShareEnabled
+      );
+
+      dispatch(setPlayingMediaStream(mediaStreamData));
     }
 
-    turnOn();
+    // turnOn();
+  }
+
+  async function handleClickMicButton() {
+    if (isMuted) {
+      const mediaStreamData = await getLocalMediaStream(
+        enableCam,
+        true,
+        screenShareEnabled
+      );
+      dispatch(setPlayingMediaStream(mediaStreamData));
+    } else {
+      const mediaStreamData = await getLocalMediaStream(
+        enableCam,
+        false,
+        screenShareEnabled
+      );
+
+      dispatch(setPlayingMediaStream(mediaStreamData));
+    }
   }
 
   async function handleClickScreenShare() {
-    if (!screenShareEnabled) {
-      const localStreamSrc = await getLocalStreamWithScreen();
-      store.dispatch(setLocalDisplayStream(localStreamSrc));
-      store.dispatch(setCamOn(false));
+    if (isMuted) {
+      const mediaStreamData = await getLocalMediaStream(
+        false,
+        !isMuted,
+        true
+      );
+      dispatch(setPlayingMediaStream(mediaStreamData));
     } else {
-      store.dispatch(setLocalDisplayStream(null));
+      const mediaStreamData = await getLocalMediaStream(
+        enableCam,
+        !isMuted,
+        false
+      );
+
+      dispatch(setPlayingMediaStream(mediaStreamData));
     }
   }
 
@@ -58,16 +83,16 @@ const WebcamControls: React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
           }
           onClick={handleClickWebcamButton}
         >
-          <img src={camIcon} alt="camera icon"/>
+          <img src={camIcon} alt="camera icon" />
         </button>
         <button
           className={
             "turn-on-video" +
             (isMuted ? " active-webcam-control" : " inactive-webcam-control")
           }
-          onClick={() => micOn()}
+          onClick={() => handleClickMicButton()}
         >
-          <img src={micIcon} alt='mic icon'/>
+          <img src={micIcon} alt="mic icon" />
         </button>
         <button
           className={
@@ -78,7 +103,7 @@ const WebcamControls: React.FC<WebcamControlsProps> = ({ turnOn, micOn }) => {
           }
           onClick={() => handleClickScreenShare()}
         >
-          <img src={ screenshareIcon} alt='screen share icon' />
+          <img src={screenshareIcon} alt="screen share icon" />
         </button>
         <button className="active-webcam-control end-meeting-button">
           <img src={endCallIcon} alt="end meeting" />{" "}

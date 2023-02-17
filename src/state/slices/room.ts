@@ -8,10 +8,10 @@ export interface RoomState {
   isMuted: boolean;
   isCamOn: boolean;
   isScreenShared: boolean;
-  selfCameraStream: MediaStream | null;
+  playingMediaStream: MediaStream | null;
   participants: Participant[];
   displayingRemoteStream: boolean;
-  username: string,
+  username: string;
 }
 
 const initialState: RoomState = {
@@ -20,10 +20,17 @@ const initialState: RoomState = {
   isMuted: false,
   isCamOn: false,
   isScreenShared: false,
-  selfCameraStream: null,
+  playingMediaStream: null,
   participants: [],
   displayingRemoteStream: false,
-  username: 'INVALID_USER',
+  username: "INVALID_USER",
+};
+
+export type MediaStreamData = {
+  mediaStream: MediaStream | null;
+  audio: boolean;
+  video: boolean;
+  screenshare: boolean;
 };
 
 export const roomSlice = createSlice({
@@ -36,55 +43,6 @@ export const roomSlice = createSlice({
     setAsHost: (state, action: PayloadAction<boolean>) => {
       state.isHost = action.payload;
     },
-    setMuted: (state, action: PayloadAction<boolean>) => {
-      state.isMuted = action.payload;
-    },
-    setCamOn: (state, action: PayloadAction<boolean>) => {
-      state.isCamOn = action.payload;
-      if (state.isScreenShared && action.payload) {
-        state.isScreenShared = false;
-      }
-    },
-    setDisplayingRemoteStream: (state, action: PayloadAction<boolean>) => {
-      state.displayingRemoteStream = action.payload;
-
-      state.isCamOn = false;
-      state.isScreenShared = false;
-    },
-    setLocalCam: (state, action: PayloadAction<MediaStream | null>) => {
-      // if (!action.payload) {
-      state.selfCameraStream?.getTracks().forEach(function (track) {
-        track.stop();
-      });
-      // }
-      if (action.payload != null) {
-        state.isScreenShared = false;
-      }
-      state.selfCameraStream = action.payload;
-    },
-    setLocalDisplayStream: (
-      state,
-      action: PayloadAction<MediaStream | null>
-    ) => {
-      // if (!action.payload) {
-      state.selfCameraStream?.getTracks().forEach(function (track) {
-        track.stop();
-      });
-      // }
-      state.isScreenShared = action.payload != null;
-      state.selfCameraStream = action.payload;
-    },
-    setRemoteDisplayStream: (
-      state,
-      action: PayloadAction<MediaStream | null>
-    ) => {
-      // if (!action.payload) {
-      state.selfCameraStream?.getTracks().forEach(function (track) {
-        track.stop();
-      });
-      // }
-      state.selfCameraStream = action.payload;
-    },
     addParticipant: (state, action: PayloadAction<Participant>) => {
       state.participants.push(action.payload);
     },
@@ -95,10 +53,34 @@ export const roomSlice = createSlice({
       );
     },
 
-    setUsername: (state: RoomState,action :PayloadAction<string>) => {
+    setUsername: (state: RoomState, action: PayloadAction<string>) => {
       state.username = action.payload;
     },
 
+    setPlayingMediaStream: (
+      state: RoomState,
+      action: PayloadAction<MediaStreamData>
+    ) => {
+      // stop any active streams
+      state.playingMediaStream?.getTracks().forEach(function (track) {
+        track.stop();
+      });
+
+      // set the mediastream
+      state.playingMediaStream = action.payload.mediaStream;
+
+      if (state.displayingRemoteStream) {
+        state.isCamOn = false;
+        state.isMuted = true;
+        state.isScreenShared = false;
+      } else {
+        // apply other settings
+        state.isCamOn = action.payload.video;
+        state.isMuted = !action.payload.audio;
+        state.isScreenShared =
+          action.payload.screenshare && !action.payload.video; // prevent both happening at the same time
+      }
+    },
   },
 });
 
@@ -106,15 +88,10 @@ export const roomSlice = createSlice({
 export const {
   setAsHost,
   setAsMainPresenter,
-  setMuted,
-  setCamOn,
-  setLocalCam,
-  setLocalDisplayStream,
-  setDisplayingRemoteStream,
-  setRemoteDisplayStream,
+  setPlayingMediaStream,
   addParticipant,
   removeParticipant,
-  setUsername
+  setUsername,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

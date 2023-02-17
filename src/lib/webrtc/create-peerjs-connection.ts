@@ -1,10 +1,7 @@
 import Peer from "peerjs";
 import { store } from "../../state/store";
 import { v4 } from "uuid";
-import {
-  setDisplayingRemoteStream,
-  setRemoteDisplayStream,
-} from "../../state/slices/room";
+import { setPlayingMediaStream } from "../../state/slices/room";
 import servers from "../constants/ice-servers";
 let clientPeer: Peer | null = null;
 export let peerId = v4();
@@ -18,10 +15,16 @@ export function getPeer() {
     if (!store.getState().room.isHost) {
       alert("Answering call");
       call.answer();
-      call.on("stream", (stream) => {
+      call.on("stream", (stream: MediaStream) => {
         // `stream` is the MediaStream of the remote peer.
-        store.dispatch(setRemoteDisplayStream(stream));
-        store.dispatch(setDisplayingRemoteStream(true));
+        store.dispatch(
+          setPlayingMediaStream({
+            mediaStream: stream,
+            audio: false,
+            video: false,
+            screenshare: false,
+          })
+        );
       });
     }
   });
