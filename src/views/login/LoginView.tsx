@@ -1,7 +1,12 @@
 import { FormEvent, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { authenticateAdmin } from "../../lib/authentication/authenticate-admin";
 import { authenticateStudent } from "../../lib/authentication/authenticate-student";
+import { UserType } from "../../lib/constants/user-types";
+import { RootState } from "../../state/store";
+import CreateMeetingView from "../create-meeting-view";
+import LobbyView from "../lobby/LobbyView";
+import { motion } from "framer-motion";
 
 const LoginView = () => {
   const [adminUsername, setAdminUsername] = useState("");
@@ -9,6 +14,9 @@ const LoginView = () => {
   const [studentUsername, setStudentUsername] = useState("");
   const [studentPassword, setStudentPassword] = useState("");
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const userType: UserType = useSelector(
+    (state: RootState) => state.auth.userType
+  );
 
   async function attemptAdminSignIn(e: FormEvent) {
     e.preventDefault();
@@ -31,10 +39,21 @@ const LoginView = () => {
 
   const [isLoggingInAsAdmin, setIsLoggingInAsAdmin] = useState(false);
 
-  if (userLoggedIn) return <Navigate to="/classrooms/1" />;
+  if (userLoggedIn) {
+    if (userType === UserType.ADMIN) {
+      return <CreateMeetingView />;
+    }
+
+    if (userType === UserType.STUDENT) {
+      return <LobbyView />;
+    }
+  }
   return (
     <div className="login-view">
-      <div className="login-view-inner-content-panel">
+      <motion.div
+        animate={{ scale: [1, 1.1, 1.1, 1, 1], animationTimingFunction: 'ease-in', animationDuration: '.13s' }}
+        className="login-view-inner-content-panel"
+      >
         <div className="form-container">
           <div className="toggle-user-type-container">
             <h3>Sign in</h3>
@@ -109,7 +128,7 @@ const LoginView = () => {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

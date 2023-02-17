@@ -16,7 +16,7 @@
     "@types/uuid": "^9.0.0",
     "crypto": "^1.0.1",
     "crypto-js": "^4.1.1",
-    "framer-motion": "^8.0.2",
+    "framer-motion": "^8.5.5",
     "peerjs": "^1.4.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

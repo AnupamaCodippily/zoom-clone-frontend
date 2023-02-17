@@ -8,7 +8,7 @@ const CreateMeetingView = () => {
   const isHost = useSelector((state: RootState) => state.room.isHost)
 
   return (
-    <div>
+    <div className="create-new-meeting-view">
       <h2>Schedule a new online class</h2>
       <form>
         <input type="text" name="classTitle" className="class-title" />
