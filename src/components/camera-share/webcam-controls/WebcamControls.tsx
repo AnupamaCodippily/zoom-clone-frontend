@@ -30,6 +30,8 @@ const WebcamControls: React.FC = () => {
       screenShareEnabled && !cameraOn
     );
 
+    setLocalMediaStreamObject(mediaStreamData.mediaStream)
+
     dispatch(setPlayingMediaStream(mediaStreamData));
   }
 

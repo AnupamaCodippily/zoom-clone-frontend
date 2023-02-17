@@ -87,5 +87,8 @@ export function setPlayingMediaStreamObjectToNull() {
 }
 
 export function setLocalMediaStreamObject(mediaStream: MediaStream | null) {
+
+  localMediaStream?.getTracks().forEach(track => track.stop());
+
   localMediaStream = mediaStream;
 }
