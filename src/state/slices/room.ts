@@ -5,7 +5,7 @@ import Participant from "../../types/Participant";
 export interface RoomState {
   isMainPresenter: boolean;
   isHost: boolean;
-  isMuted: boolean;
+  isMicOn: boolean;
   isCamOn: boolean;
   isScreenShared: boolean;
   playingMediaStream: MediaStream | null;
@@ -17,7 +17,7 @@ export interface RoomState {
 const initialState: RoomState = {
   isMainPresenter: true,
   isHost: false,
-  isMuted: false,
+  isMicOn: false,
   isCamOn: false,
   isScreenShared: false,
   playingMediaStream: null,
@@ -26,8 +26,7 @@ const initialState: RoomState = {
   username: "INVALID_USER",
 };
 
-export type MediaStreamData = {
-  mediaStream: MediaStream | null;
+export type MediaStreamMetaData = {
   audio: boolean;
   video: boolean;
   screenshare: boolean;
@@ -57,26 +56,30 @@ export const roomSlice = createSlice({
       state.username = action.payload;
     },
 
+    setMicOn: (state: RoomState, action: PayloadAction<boolean>) => {
+      state.isMicOn = action.payload;
+    },
+
     setPlayingMediaStream: (
       state: RoomState,
-      action: PayloadAction<MediaStreamData>
+      action: PayloadAction<MediaStreamMetaData>
     ) => {
       // stop any active streams
-      state.playingMediaStream?.getTracks().forEach(function (track) {
-        track.stop();
-      });
+      // state.playingMediaStream?.getTracks().forEach(function (track) {
+      //   track.stop();
+      // });
 
-      // set the mediastream
-      state.playingMediaStream = action.payload.mediaStream;
+      // // set the mediastream
+      // state.playingMediaStream = action.payload.mediaStream;
 
       if (state.displayingRemoteStream) {
         state.isCamOn = false;
-        state.isMuted = true;
+        state.isMicOn = true;
         state.isScreenShared = false;
       } else {
         // apply other settings
         state.isCamOn = action.payload.video;
-        state.isMuted = !action.payload.audio;
+        state.isMicOn = action.payload.audio;
         state.isScreenShared =
           action.payload.screenshare && !action.payload.video; // prevent both happening at the same time
       }
@@ -92,6 +95,7 @@ export const {
   addParticipant,
   removeParticipant,
   setUsername,
+  setMicOn
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

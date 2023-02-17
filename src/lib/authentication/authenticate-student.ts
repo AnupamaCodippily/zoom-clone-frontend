@@ -8,6 +8,7 @@ import { store } from "../../state/store";
 import { STUDENT_LOGIN_URL } from "../constants/urls";
 import { UserType } from "../constants/user-types";
 import { createBasicToken } from "./authenticate-admin";
+import { storeStudentBasicDetailsLS } from "./local-appdata";
 import { setTypeOfUserInLocalStorage } from "./local-tokens";
 
 export async function authenticateStudent(username: string, password: string) {
@@ -34,6 +35,8 @@ export async function authenticateStudent(username: string, password: string) {
     store.dispatch(setUserType(UserType.STUDENT));
 
     localStorage.setItem("student-token", access_token);
+
+    storeStudentBasicDetailsLS(username)
     setTypeOfUserInLocalStorage(UserType.STUDENT);
     return true;
   } else {

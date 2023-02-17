@@ -3,6 +3,7 @@ import { store } from "../../state/store";
 import { v4 } from "uuid";
 import { setPlayingMediaStream } from "../../state/slices/room";
 import servers from "../constants/ice-servers";
+import { setLocalMediaStreamObject } from "./setup-media-sources";
 
 let clientPeer: Peer | null = null;
 export let peerId = v4();
@@ -18,9 +19,11 @@ export function getPeer() {
       call.answer();
       call.on("stream", (stream: MediaStream) => {
         // `stream` is the MediaStream of the remote peer.
+
+        setLocalMediaStreamObject(stream);
+
         store.dispatch(
           setPlayingMediaStream({
-            mediaStream: stream,
             audio: false,
             video: false,
             screenshare: false,

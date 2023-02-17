@@ -1,6 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getLocalMediaStream } from "../../../lib/webrtc/setup-media-sources";
+import {
+  createNewAudioTrackForScreenshare,
+  getLocalMediaStream as getLocalMediaStreamMetaData,
+  getLocalMediaStreamObject,
+  setLocalMediaStreamObject,
+  setPlayingMediaStreamObjectToNull,
+} from "../../../lib/webrtc/setup-media-sources";
 import { setPlayingMediaStream } from "../../../state/slices/room";
 import { RootState } from "../../../state/store";
 import camIcon from "../../../assets/icons/video-cam-icon.png";
@@ -9,8 +15,8 @@ import screenshareIcon from "../../../assets/icons/screenshare-icon.png";
 import endCallIcon from "../../../assets/icons/end-call-icon-9.jpg";
 
 const WebcamControls: React.FC = () => {
-  const isMuted = useSelector((state: RootState) => state.room.isMuted);
-  const enableCam = useSelector((state: RootState) => state.room.isCamOn);
+  const isMicOn = useSelector((state: RootState) => state.room.isMicOn);
+  const cameraOn = useSelector((state: RootState) => state.room.isCamOn);
   const screenShareEnabled = useSelector(
     (state: RootState) => state.room.isScreenShared
   );
@@ -18,59 +24,70 @@ const WebcamControls: React.FC = () => {
   const dispatch = useDispatch();
 
   async function handleClickWebcamButton() {
-    if (!enableCam) {
-      const mediaStreamData = await getLocalMediaStream(true, !isMuted, false);
+    const mediaStreamData = await getLocalMediaStreamMetaData(
+      !cameraOn,
+      isMicOn,
+      screenShareEnabled && !cameraOn
+    );
 
-      dispatch(setPlayingMediaStream(mediaStreamData));
-    } else {
-      const mediaStreamData = await getLocalMediaStream(
-        false,
-        !isMuted,
-        screenShareEnabled
-      );
-
-      dispatch(setPlayingMediaStream(mediaStreamData));
-    }
-
-    // turnOn();
+    dispatch(setPlayingMediaStream(mediaStreamData));
   }
 
   async function handleClickMicButton() {
-    if (isMuted) {
-      const mediaStreamData = await getLocalMediaStream(
-        enableCam,
-        true,
-        screenShareEnabled
+    if (screenShareEnabled && isMicOn) {
+      setPlayingMediaStreamObjectToNull();
+
+      const lmsObj = getLocalMediaStreamObject();
+      lmsObj?.removeTrack(lmsObj.getAudioTracks()[0]);
+      dispatch(
+        setPlayingMediaStream({
+          audio: false,
+          video: false,
+          screenshare: true,
+        })
       );
-      dispatch(setPlayingMediaStream(mediaStreamData));
+
+      setLocalMediaStreamObject(lmsObj);
+
+    } else if (screenShareEnabled && !isMicOn) {
+      setPlayingMediaStreamObjectToNull();
+      const lmsObj = getLocalMediaStreamObject();
+
+      // create a new track
+      const audioTrack = await createNewAudioTrackForScreenshare();
+
+      if (audioTrack) {
+        lmsObj?.addTrack(audioTrack);
+        dispatch(
+          setPlayingMediaStream({
+            audio: true,
+            video: false,
+            screenshare: true,
+          })
+        );
+      }
+
+      setLocalMediaStreamObject(lmsObj)
     } else {
-      const mediaStreamData = await getLocalMediaStream(
-        enableCam,
-        false,
+      const mediaStreamData = await getLocalMediaStreamMetaData(
+        cameraOn,
+        !isMicOn,
         screenShareEnabled
       );
 
-      dispatch(setPlayingMediaStream(mediaStreamData));
+      setLocalMediaStreamObject(mediaStreamData.mediaStream);
+
+      dispatch(setPlayingMediaStream({ ...mediaStreamData }));
     }
   }
 
   async function handleClickScreenShare() {
-    if (isMuted) {
-      const mediaStreamData = await getLocalMediaStream(
-        false,
-        !isMuted,
-        true
-      );
-      dispatch(setPlayingMediaStream(mediaStreamData));
-    } else {
-      const mediaStreamData = await getLocalMediaStream(
-        enableCam,
-        !isMuted,
-        false
-      );
-
-      dispatch(setPlayingMediaStream(mediaStreamData));
-    }
+    const mediaStreamData = await getLocalMediaStreamMetaData(
+      false,
+      isMicOn,
+      !screenShareEnabled
+    );
+    dispatch(setPlayingMediaStream(mediaStreamData));
   }
 
   return (
@@ -79,16 +96,16 @@ const WebcamControls: React.FC = () => {
         <button
           className={
             "turn-on-video" +
-            (enableCam ? " active-webcam-control" : " inactive-webcam-control")
+            (cameraOn ? " active-webcam-control" : " inactive-webcam-control")
           }
-          onClick={handleClickWebcamButton}
+          onClick={() => handleClickWebcamButton()}
         >
           <img src={camIcon} alt="camera icon" />
         </button>
         <button
           className={
             "turn-on-video" +
-            (isMuted ? " active-webcam-control" : " inactive-webcam-control")
+            (isMicOn ? " active-webcam-control" : " inactive-webcam-control")
           }
           onClick={() => handleClickMicButton()}
         >
