@@ -20,7 +20,15 @@ export function getPeer() {
       call.on("stream", (stream: MediaStream) => {
         // `stream` is the MediaStream of the remote peer.
 
-        setLocalMediaStreamObject(stream);
+        setLocalMediaStreamObject(
+          {
+            mediaStream: stream,
+            audio: false,
+            video: false,
+            screenshare: false,
+          },
+          { remoteVideo: true }
+        );
 
         store.dispatch(
           setPlayingMediaStream({

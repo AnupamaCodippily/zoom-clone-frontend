@@ -1,0 +1,68 @@
+.create-new-meeting-view {
+  width: 100vw;
+  height: 100vh;
+  background-color: #f9fbff;
+
+  position: fixed;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  .center-panel {
+    position: relative;
+    width: 320px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    position: relative;
+    padding: 40px 50px;
+
+    border: none;
+    border-radius: 5px;
+
+    -webkit-box-shadow: 0px 0px 8px 7px rgba(232, 232, 232, 1);
+    -moz-box-shadow: 0px 0px 8px 7px rgba(232, 232, 232, 1);
+    box-shadow: 0px 0px 8px 7px rgba(232, 232, 232, 1);
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    input[type="text"],
+    input[type="password"] {
+      min-height: 30px;
+      border: solid 0.1px rgb(159, 158, 158);
+      border-radius: 3px;
+      padding-left: 5px;
+      background-color: white;
+    }
+
+    input[type="submit"] {
+      background-color: rgb(98, 0, 238);
+      border: none;
+      border-radius: 4px;
+      padding: 6px;
+      color: white;
+      text-transform: uppercase;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    input:focus {
+      outline: none !important;
+      border: 1px solid rgb(98, 0, 238);
+    }
+  }
+}

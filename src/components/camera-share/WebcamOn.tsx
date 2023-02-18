@@ -4,12 +4,10 @@ import { getLocalMediaStreamObject } from "../../lib/webrtc/setup-media-sources"
 import { RootState } from "../../state/store";
 
 const WebcamOn = () => {
-  const isSelfMuted = useSelector((state: RootState) => state.room.isMuted);
+  const isSelfMuted = useSelector((state: RootState) => state.room.isMicOn);
   const isMainPresenter = useSelector(
     (state: RootState) => state.room.isMainPresenter
   );
-  // const localStreamSrc = useSelector((state: RootState) => state.room.)
-
   const localStreamSrc = useSelector(
     (state: RootState) => state.room.playingMediaStream
   );
@@ -21,7 +19,7 @@ const WebcamOn = () => {
       videoRef.current.srcObject = getLocalMediaStreamObject();
       videoRef.current.play();
     }
-  }, [localStreamSrc]);
+  }, [localStreamSrc, isSelfMuted]);
 
   return (
     <video

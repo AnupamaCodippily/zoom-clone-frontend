@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createNewAudioTrackForScreenshare,
-  getLocalMediaStream as getLocalMediaStreamMetaData,
+  getLocalMediaStream,
   getLocalMediaStreamObject,
   setLocalMediaStreamObject,
   setPlayingMediaStreamObjectToNull,
@@ -23,18 +23,22 @@ const WebcamControls: React.FC = () => {
 
   const dispatch = useDispatch();
 
+  /**
+   * Toggle WebCam
+   */
   async function handleClickWebcamButton() {
-    const mediaStreamData = await getLocalMediaStreamMetaData(
+    const mediaStreamData = await getLocalMediaStream(
       !cameraOn,
       isMicOn,
-      screenShareEnabled && !cameraOn
+      screenShareEnabled && !cameraOn // check here
     );
-
-    setLocalMediaStreamObject(mediaStreamData.mediaStream)
-
-    dispatch(setPlayingMediaStream(mediaStreamData));
+    // setPlayingMediaStreamObjectToNull();
+    setLocalMediaStreamObject(mediaStreamData);
   }
 
+  /**
+   * Toggle Mic
+   */
   async function handleClickMicButton() {
     if (screenShareEnabled && isMicOn) {
       setPlayingMediaStreamObjectToNull();
@@ -49,10 +53,9 @@ const WebcamControls: React.FC = () => {
         })
       );
 
-      setLocalMediaStreamObject(lmsObj);
-
+      // setLocalMediaStreamObject(lmsObj);
     } else if (screenShareEnabled && !isMicOn) {
-      setPlayingMediaStreamObjectToNull();
+      // setPlayingMediaStreamObjectToNull();
       const lmsObj = getLocalMediaStreamObject();
 
       // create a new track
@@ -69,27 +72,29 @@ const WebcamControls: React.FC = () => {
         );
       }
 
-      setLocalMediaStreamObject(lmsObj)
+      // setLocalMediaStreamObject(lmsObj);
     } else {
-      const mediaStreamData = await getLocalMediaStreamMetaData(
+      const mediaStreamData = await getLocalMediaStream(
         cameraOn,
         !isMicOn,
         screenShareEnabled
       );
-
-      setLocalMediaStreamObject(mediaStreamData.mediaStream);
-
-      dispatch(setPlayingMediaStream({ ...mediaStreamData }));
+      // setPlayingMediaStreamObjectToNull();
+      setLocalMediaStreamObject(mediaStreamData);
     }
   }
 
+  /**
+   * Toggle screenshare
+   */
   async function handleClickScreenShare() {
-    const mediaStreamData = await getLocalMediaStreamMetaData(
+    const mediaStreamData = await getLocalMediaStream(
       false,
       isMicOn,
       !screenShareEnabled
     );
-    dispatch(setPlayingMediaStream(mediaStreamData));
+    const { audio, screenshare, video } = mediaStreamData;
+    dispatch(setPlayingMediaStream({ audio, video, screenshare }));
   }
 
   return (

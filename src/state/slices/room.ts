@@ -11,7 +11,6 @@ export interface RoomState {
   playingMediaStream: MediaStream | null;
   participants: Participant[];
   displayingRemoteStream: boolean;
-  username: string;
 }
 
 const initialState: RoomState = {
@@ -23,7 +22,6 @@ const initialState: RoomState = {
   playingMediaStream: null,
   participants: [],
   displayingRemoteStream: false,
-  username: "INVALID_USER",
 };
 
 export type MediaStreamMetaData = {
@@ -50,10 +48,6 @@ export const roomSlice = createSlice({
       state.participants = state.participants.filter(
         (participant: Participant) => participant.id !== action.payload.id
       );
-    },
-
-    setUsername: (state: RoomState, action: PayloadAction<string>) => {
-      state.username = action.payload;
     },
 
     setMicOn: (state: RoomState, action: PayloadAction<boolean>) => {
@@ -94,8 +88,7 @@ export const {
   setPlayingMediaStream,
   addParticipant,
   removeParticipant,
-  setUsername,
-  setMicOn
+  setMicOn,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

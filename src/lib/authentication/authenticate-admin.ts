@@ -1,5 +1,5 @@
 import { setAuthErrorState, setAuthJwtToken, setUserType } from "../../state/slices/auth";
-import { setUsername } from "../../state/slices/room";
+import { setUserName } from "../../state/slices/auth";
 import { store } from "../../state/store";
 import { ADMIN_LOGIN_URL } from "../constants/urls";
 import { UserType } from "../constants/user-types";
@@ -25,7 +25,7 @@ export async function authenticateAdmin(username: string, password: string) {
   if (access_token) {
     store.dispatch(setAuthJwtToken(access_token))
     store.dispatch(setAuthErrorState(false))
-    store.dispatch(setUsername(username))
+    store.dispatch(setUserName(username))
     store.dispatch(setUserType(UserType.ADMIN))
 
     localStorage.setItem('admin-access-token', access_token)

@@ -13,11 +13,13 @@ const WebcamVideo: React.FC = () => {
   const isScreenShared = useSelector(
     (state: RootState) => state.room.isScreenShared
   );
-
+  const isMicOn = useSelector(
+    (state: RootState) => state.room.isMicOn
+  );
   return (
     <div className="webcam webcam-container">
       <div className="webcam-video-container">
-        {isWebcamOn || isScreenShared || isRemoteScreenSharing ? (
+        {isWebcamOn || isScreenShared || isRemoteScreenSharing || isMicOn ? (
           <WebcamOn />
         ) : (
           <WebcamOff />

@@ -6,12 +6,16 @@ export interface AuthState {
   authJwtToken: string;
   authErrorState: boolean;
   userType: UserType;
+  username: string;
+  roomName: string;
 }
 
 const initialState: AuthState = {
   authJwtToken: "",
   authErrorState: false,
   userType: UserType.GUEST,
+  username: "INVALID_USER",
+  roomName: "",
 };
 
 export const authSlice = createSlice({
@@ -24,12 +28,19 @@ export const authSlice = createSlice({
     setAuthErrorState: (state: AuthState, action: PayloadAction<boolean>) => {
       state.authErrorState = action.payload;
     },
-    setUserType: (state:AuthState, action: PayloadAction<UserType>) => {
+    setUserType: (state: AuthState, action: PayloadAction<UserType>) => {
       state.userType = action.payload;
+    },
+    setRoomName: (state: AuthState, action: PayloadAction<string>) => {
+      state.roomName = action.payload;
+    },
+    setUserName: (state: AuthState, action: PayloadAction<string>) => {
+      state.username = action.payload;
     }
   },
 });
 
-export const { setAuthJwtToken, setAuthErrorState ,setUserType} = authSlice.actions;
+export const { setAuthJwtToken, setAuthErrorState, setUserType, setRoomName, setUserName } =
+  authSlice.actions;
 
 export default authSlice.reducer;

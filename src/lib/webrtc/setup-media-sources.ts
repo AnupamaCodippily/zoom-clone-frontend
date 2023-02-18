@@ -32,6 +32,8 @@ export async function getLocalMediaStream(
 ): Promise<MediaStreamCreationData> {
   if (!screenshare) {
     if (!(audioOn || videoOn)) {
+      setPlayingMediaStreamObjectToNull();
+
       return {
         audio: audioOn,
         video: videoOn,
@@ -52,7 +54,7 @@ export async function getLocalMediaStream(
       mediaStream: localStream,
     });
 
-    localMediaStream = localStream;
+    // localMediaStream = localStream;
 
     return result;
   } else {
@@ -67,7 +69,7 @@ export async function getLocalMediaStream(
       mediaStream: localStream,
     });
 
-    localMediaStream = localStream;
+    // localMediaStream = localStream;
     return result;
   }
 }
@@ -84,11 +86,37 @@ export function setPlayingMediaStreamObjectToNull() {
       audio: false,
     })
   );
+
+  localMediaStream?.getTracks().forEach((track) => track.stop());
+  localMediaStream = null;
 }
 
-export function setLocalMediaStreamObject(mediaStream: MediaStream | null) {
+export function setLocalMediaStreamObject(
+  mediaStreamData: MediaStreamCreationData | null,
+  options?: any
+) {
+  if (!options || !options["remoteVideo"]) {
+    if (!mediaStreamData) {
+      setPlayingMediaStreamObjectToNull();
+      return;
+    }
 
-  localMediaStream?.getTracks().forEach(track => track.stop());
+    const { mediaStream, audio, video, screenshare } = mediaStreamData;
 
-  localMediaStream = mediaStream;
+    if (!mediaStream) {
+      setPlayingMediaStreamObjectToNull();
+      return;
+    }
+
+    if (!(audio || video || screenshare)) {
+      setPlayingMediaStreamObjectToNull();
+      return;
+    }
+    // setPlayingMediaStreamObjectToNull();
+    localMediaStream?.getTracks().forEach((track) => track.stop());
+
+    localMediaStream = mediaStreamData?.mediaStream;
+
+    store.dispatch(setPlayingMediaStream({ audio, video, screenshare }));
+  }
 }

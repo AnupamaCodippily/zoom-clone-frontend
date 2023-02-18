@@ -24,7 +24,7 @@ const persistConfig = {
   blacklist: [
     'api',
     'chat',
-    'room',
+    'room'
   ]
 };
 
