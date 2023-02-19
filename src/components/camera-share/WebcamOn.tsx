@@ -5,6 +5,8 @@ import { RootState } from "../../state/store";
 
 const WebcamOn = () => {
   const isSelfMuted = useSelector((state: RootState) => state.room.isMicOn);
+  const isScreenShared = useSelector((state: RootState) => state.room.isScreenShared);
+  const isCamOn = useSelector((state: RootState) => state.room.isCamOn);
   const isMainPresenter = useSelector(
     (state: RootState) => state.room.isMainPresenter
   );
@@ -19,7 +21,7 @@ const WebcamOn = () => {
       videoRef.current.srcObject = getLocalMediaStreamObject();
       videoRef.current.play();
     }
-  }, [localStreamSrc, isSelfMuted]);
+  }, [localStreamSrc, isSelfMuted, isCamOn, isScreenShared ]);
 
   return (
     <video

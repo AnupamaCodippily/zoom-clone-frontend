@@ -5,7 +5,6 @@ import {
   getLocalMediaStream,
   getLocalMediaStreamObject,
   setLocalMediaStreamObject,
-  setPlayingMediaStreamObjectToNull,
 } from "../../../lib/webrtc/setup-media-sources";
 import { setPlayingMediaStream } from "../../../state/slices/room";
 import { RootState } from "../../../state/store";
@@ -32,7 +31,6 @@ const WebcamControls: React.FC = () => {
       isMicOn,
       screenShareEnabled && !cameraOn // check here
     );
-    // setPlayingMediaStreamObjectToNull();
     setLocalMediaStreamObject(mediaStreamData);
   }
 
@@ -41,7 +39,7 @@ const WebcamControls: React.FC = () => {
    */
   async function handleClickMicButton() {
     if (screenShareEnabled && isMicOn) {
-      setPlayingMediaStreamObjectToNull();
+      // setPlayingMediaStreamObjectToNull();
 
       const lmsObj = getLocalMediaStreamObject();
       lmsObj?.removeTrack(lmsObj.getAudioTracks()[0]);
@@ -79,7 +77,6 @@ const WebcamControls: React.FC = () => {
         !isMicOn,
         screenShareEnabled
       );
-      // setPlayingMediaStreamObjectToNull();
       setLocalMediaStreamObject(mediaStreamData);
     }
   }
@@ -95,6 +92,8 @@ const WebcamControls: React.FC = () => {
     );
     const { audio, screenshare, video } = mediaStreamData;
     dispatch(setPlayingMediaStream({ audio, video, screenshare }));
+    setLocalMediaStreamObject(mediaStreamData);
+
   }
 
   return (

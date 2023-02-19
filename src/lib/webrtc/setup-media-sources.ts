@@ -63,7 +63,7 @@ export async function getLocalMediaStream(
       audio: false,
     });
     const result = Object.freeze({
-      audio: false,
+      audio: audioOn,
       video: false,
       screenshare: true,
       mediaStream: localStream,
