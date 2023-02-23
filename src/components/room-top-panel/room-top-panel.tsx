@@ -12,7 +12,7 @@ function getDate() {
 
 const RoomTopPanel = () => {
   const title = useSelector<RootState, string>(
-    (state: RootState) => state.auth.roomName
+    (state: RootState) => state.auth.meetingTitle
   );
 
   return (

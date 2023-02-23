@@ -1,11 +1,14 @@
 import React, { FormEvent, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { checkClassroom } from "../../lib/classroom/student-connect";
 import { CLASSROOMS_CLIENT_URL } from "../../lib/constants/urls";
+import { setMeetingTitle, setRoomName } from "../../state/slices/auth";
 
 const LobbyView = () => {
   const [code, setCode] = useState("");
   const [classroomActive, setClassroomActive] = useState("");
+  const dispatch= useDispatch();
 
   async function checkClassroomCode(e: FormEvent) {
     e.preventDefault();
@@ -14,7 +17,8 @@ const LobbyView = () => {
       const res = await checkClassroom(code);
 
       if (res) {
-        console.log(res)
+        dispatch(setMeetingTitle(res.className))
+        dispatch(setRoomName(res.meetingUrlId))
         setClassroomActive(res.meetingUrlId);
       }
     }

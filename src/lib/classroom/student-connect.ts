@@ -3,6 +3,7 @@ import { api } from "../../state/queries/chatQueries";
 import {
   CLASSROOMS_SERVER_CHECK_URL,
 } from "../constants/urls";
+import { setMeetingTitle } from "../../state/slices/auth";
 
 export async function checkClassroom(code: string) {
   const resultJson = await fetch(CLASSROOMS_SERVER_CHECK_URL + "/" + code, {
@@ -13,6 +14,10 @@ export async function checkClassroom(code: string) {
     },
   });
   const result = await resultJson.json();
+  
+  if (result.exists) {
+    store.dispatch(setMeetingTitle(result.meetingName));
+  }
 
   return result.exists;
 }

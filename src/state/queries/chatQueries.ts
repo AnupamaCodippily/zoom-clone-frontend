@@ -4,7 +4,7 @@ import setupSocketIOForMessages, {
   ISocket,
   setupSocketListeners,
 } from "../../lib/sockets/setupSocketIO";
-import { getPeer, peerId } from "../../lib/webrtc/create-peerjs-connection";
+import { getPeer,  peerId } from "../../lib/webrtc/create-peerjs-connection";
 import IChatMessage from "../../types/Message";
 import { store } from "../store";
 
@@ -75,5 +75,22 @@ export const api: any = createApi({
         });
       },
     }),
+
+
+    studentJoinMeeting: build.mutation<any, null>({
+      queryFn: ({ meetingId }: any) => {
+        const socket = setupSocketIOForMessages();
+        const _peerId = peerId;
+        return new Promise((resolve) => {
+          socket?.emit(
+            "student-joined-meeting",
+            { meetingId, studentPeerId: _peerId },
+            (message: any) => {
+              resolve({ data: message });
+            }
+          );
+        });
+      },
+    })
   }),
 });
