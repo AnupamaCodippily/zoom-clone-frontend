@@ -9,7 +9,7 @@ export interface IChatMessageComponent {
 
 const ChatMessage: React.FC<IChatMessageComponent> = ({ senderName, chatMessage }) => {
 
-  const username = useSelector((state: RootState) => state.room.username)
+  const username = useSelector((state: RootState) => state.auth.username)
 
   return (
     <div className={`chat-message from-${senderName === username ? 'me' : 'other'}`}>

@@ -47,11 +47,11 @@ export const api: any = createApi({
     sendMessage: build.mutation<any, IChatMessage>({
       queryFn: (chatMessageContent: IChatMessage) => {
         const socket = setupSocketIOForMessages();
-
+        const { id, meetingName, messageBody, roomId, senderName } = chatMessageContent;
         return new Promise((resolve) => {
           socket?.emit(
             "client-send-message-to-server",
-            chatMessageContent,
+            {id, meetingName, messageBody, roomId, senderName},
             (message: IChatMessage) => {
               resolve({ data: message });
             }

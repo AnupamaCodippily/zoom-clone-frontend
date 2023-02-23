@@ -1,6 +1,7 @@
 export default interface IChatMessage {
     id: string;
-    username: string;
-    body: string;
+    senderName: string;
+    messageBody: string;
     roomId: string;
+    meetingName: string;
 }

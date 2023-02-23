@@ -20,7 +20,9 @@ export async function checkClassroom(code: string) {
 export async function studentSendMessageToChatroom(message: string) {
   store.dispatch(
     api.endpoints.sendMessage.initiate({
-      meetingId: store.getState().room.roomName,
+      meetingId: store.getState().auth.roomName,
+      meetingName: store.getState().auth.roomName,
+      senderName: store.getState().auth.username,
       messageBody: message,
     })
   );

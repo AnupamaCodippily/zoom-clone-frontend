@@ -5,7 +5,7 @@ import { RootState, store } from "../../state/store";
 import { api } from "../../state/queries/chatQueries";
 
 const Chatbox: React.FC = () => {
-  const username = store.getState().room.username;
+  const username = useSelector((state: RootState) => state.auth.username);
   const [message, setMessage] = useState("");
   const meetingName = useSelector((state: RootState) => state.auth.roomName);
   const dispatch = useDispatch();
