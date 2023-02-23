@@ -1,26 +1,35 @@
 import { FormEvent, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { hostStartMeeting } from "../lib/classroom/host-connect";
+import {
+  hostCreateMeeting,
+  hostStartMeeting,
+} from "../lib/classroom/host-connect";
 import { CLASSROOMS_CLIENT_URL } from "../lib/constants/urls";
 import { RootState, store } from "../state/store";
 
 const CreateMeetingView = () => {
-  const isLinkCreated = useState(false);
   const isHost = useSelector((state: RootState) => state.room.isHost);
   const [title, setTitle] = useState("");
+  const [meetingId, setMeetingId] = useState("");
 
-  const [meetingActive, setMeetingActive] = useState('');
+  const [meetingActive, setMeetingActive] = useState("");
 
   async function handleStartMeeting(e: FormEvent) {
     e.preventDefault();
 
-    const meetingId = await hostStartMeeting(title, store.getState().auth.roomName);
+    const id = await hostCreateMeeting(title);
 
+    setMeetingId(id);
+  }
+
+  function startMeeting() {
+    hostStartMeeting(title, meetingId);
     setMeetingActive(meetingId);
   }
 
-  if (meetingActive !== '') return <Navigate to={ CLASSROOMS_CLIENT_URL +  meetingActive}/>
+  if (meetingActive !== "")
+    return <Navigate to={CLASSROOMS_CLIENT_URL +"/" +meetingActive} />;
 
   return (
     <div className="create-new-meeting-view">
@@ -40,14 +49,26 @@ const CreateMeetingView = () => {
             />
             <input type="submit" value="Create" />
           </form>
-          {isLinkCreated && isHost && (
-            <div>
-              <textarea
-                name="created-class-link"
-                cols={30}
-                rows={10}
-              ></textarea>
-            </div>
+          {meetingId?.trim() !== "" && (
+            <>
+              <div>
+                <textarea
+                  name="created-class-link"
+                  cols={30}
+                  rows={10}
+                  value={meetingId}
+                ></textarea>
+              </div>
+
+              <br />
+
+              <button
+                className="start-meet-button"
+                onClick={() => startMeeting()}
+              >
+                Start
+              </button>
+            </>
           )}
         </div>
       </div>

@@ -1,7 +1,6 @@
 import { store } from "../../state/store";
 import { api } from "../../state/queries/chatQueries";
 import {
-  CLASSROOMS_SERVER_BASE_URL,
   CLASSROOMS_SERVER_CHECK_URL,
 } from "../constants/urls";
 
@@ -10,11 +9,12 @@ export async function checkClassroom(code: string) {
     method: "get",
     headers: {
       Authorization: "Bearer " + store.getState().auth.authJwtToken,
+      'Content-type': 'application/json'
     },
   });
   const result = await resultJson.json();
 
-  return result.classroom?.exists;
+  return result.exists;
 }
 
 export async function studentSendMessageToChatroom(message: string) {

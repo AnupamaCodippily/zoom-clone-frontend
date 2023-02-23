@@ -1,19 +1,19 @@
 import React, { FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import sendIcon from "../../assets/icons/send-msg-icon.png";
-import { store } from "../../state/store";
+import { RootState, store } from "../../state/store";
 import { api } from "../../state/queries/chatQueries";
 
 const Chatbox: React.FC = () => {
   const username = store.getState().room.username;
   const [message, setMessage] = useState("");
-
+  const meetingName = useSelector((state: RootState) => state.auth.roomName);
   const dispatch = useDispatch();
 
   function handleCreateMessage(event: FormEvent) {
     event.preventDefault();
 
-    dispatch(api.endpoints.sendMessage.initiate({ senderName: username, body: message }));
+    dispatch(api.endpoints.sendMessage.initiate({ senderName: username, messageBody: message, meetingName: meetingName }));
     setMessage((_) => "");
   }
 
