@@ -6,4 +6,6 @@ export const ZOOM_CLONE_SERVER_URL = process.env.REACT_APP_SERVER_URL;
 export const ZOOM_CLONE_SERVER_ROOM_BASE_URL = ZOOM_CLONE_SERVER_URL + "/rooms";
 
 export const CLASSROOMS_SERVER_BASE_URL = SERVER_URL + "/api/classrooms";
+export const CLASSROOMS_SERVER_CHECK_URL = SERVER_URL +"/api/online-class/check";
+export const CLASSROOMS_SERVER_URL = SERVER_URL +"/api/online-class/check";
 export const CLASSROOMS_CLIENT_URL =   "/classrooms/";

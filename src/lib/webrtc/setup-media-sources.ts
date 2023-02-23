@@ -1,4 +1,4 @@
-import { setPlayingMediaStream } from "../../state/slices/room";
+import { setIsDisplayingRemoteStream, setPlayingMediaStream } from "../../state/slices/room";
 import { store } from "../../state/store";
 
 export let localMediaStream: MediaStream | null = null;
@@ -118,5 +118,27 @@ export function setLocalMediaStreamObject(
     localMediaStream = mediaStreamData?.mediaStream;
 
     store.dispatch(setPlayingMediaStream({ audio, video, screenshare }));
+  } else {
+    if (options.remoteVideo) {
+      if (!mediaStreamData) {
+        setPlayingMediaStreamObjectToNull();
+        return;
+      }
+
+      const { mediaStream, audio, video, screenshare } = mediaStreamData;
+
+      if (!mediaStream) {
+        setPlayingMediaStreamObjectToNull();
+        return;
+      }
+
+      localMediaStream?.getTracks().forEach((track) => track.stop());
+
+      localMediaStream = mediaStreamData?.mediaStream;
+
+      store.dispatch(setPlayingMediaStream({ audio, video, screenshare }));
+
+      store.dispatch(setIsDisplayingRemoteStream(true))
+    }
   }
 }

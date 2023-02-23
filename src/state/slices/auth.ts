@@ -8,6 +8,7 @@ export interface AuthState {
   userType: UserType;
   username: string;
   roomName: string;
+  meetingTitle: string;
 }
 
 const initialState: AuthState = {
@@ -16,6 +17,7 @@ const initialState: AuthState = {
   userType: UserType.GUEST,
   username: "INVALID_USER",
   roomName: "",
+  meetingTitle: ""
 };
 
 export const authSlice = createSlice({
@@ -36,11 +38,14 @@ export const authSlice = createSlice({
     },
     setUserName: (state: AuthState, action: PayloadAction<string>) => {
       state.username = action.payload;
+    },
+    setMeetingTitle: (state: AuthState, action: PayloadAction<string>) => {
+      state.meetingTitle = action.payload;
     }
   },
 });
 
-export const { setAuthJwtToken, setAuthErrorState, setUserType, setRoomName, setUserName } =
+export const { setAuthJwtToken, setAuthErrorState, setUserType, setRoomName, setUserName, setMeetingTitle } =
   authSlice.actions;
 
 export default authSlice.reducer;

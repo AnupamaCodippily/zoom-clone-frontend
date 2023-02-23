@@ -58,5 +58,21 @@ export const api: any = createApi({
         });
       },
     }),
+
+    startMeeting: build.mutation<any, null>({
+      queryFn: ({ title, meetingId }: any) => {
+        const socket = setupSocketIOForMessages();
+
+        return new Promise((resolve) => {
+          socket?.emit(
+            "host-started-meeting",
+            {title, meetingId},
+            (message: any) => {
+              resolve({ data: message });
+            }
+          );
+        });
+      },
+    }),
   }),
 });

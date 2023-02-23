@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { hostStartMeeting } from "../lib/classroom/host-connect";
 import { CLASSROOMS_CLIENT_URL } from "../lib/constants/urls";
-import { RootState } from "../state/store";
+import { RootState, store } from "../state/store";
 
 const CreateMeetingView = () => {
   const isLinkCreated = useState(false);
@@ -12,10 +12,10 @@ const CreateMeetingView = () => {
 
   const [meetingActive, setMeetingActive] = useState('');
 
-  function handleStartMeeting(e: FormEvent) {
+  async function handleStartMeeting(e: FormEvent) {
     e.preventDefault();
 
-    const meetingId = hostStartMeeting(title);
+    const meetingId = await hostStartMeeting(title, store.getState().auth.roomName);
 
     setMeetingActive(meetingId);
   }

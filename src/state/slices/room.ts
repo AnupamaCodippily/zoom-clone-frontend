@@ -78,6 +78,10 @@ export const roomSlice = createSlice({
           action.payload.screenshare && !action.payload.video; // prevent both happening at the same time
       }
     },
+
+    setIsDisplayingRemoteStream: (state: RoomState, action: PayloadAction<boolean>) => {
+      state.displayingRemoteStream = action.payload;
+    }
   },
 });
 
@@ -89,6 +93,7 @@ export const {
   addParticipant,
   removeParticipant,
   setMicOn,
+  setIsDisplayingRemoteStream
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

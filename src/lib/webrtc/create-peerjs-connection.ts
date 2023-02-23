@@ -14,6 +14,8 @@ export function getPeer() {
   clientPeer = new Peer(peerId, { config: { iceServers: servers.iceServers } });
 
   clientPeer.on("call", (call) => {
+    alert('You are receiving a call')
+    console.log(call)
     if (!store.getState().room.isHost) {
       alert("Answering call");
       call.answer();
