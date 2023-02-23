@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, ReactElement, useState } from "react";
 import { useSelector } from "react-redux";
 import { authenticateAdmin } from "../../lib/authentication/authenticate-admin";
 import { authenticateStudent } from "../../lib/authentication/authenticate-student";
@@ -6,7 +6,8 @@ import { UserType } from "../../lib/constants/user-types";
 import { RootState } from "../../state/store";
 import CreateMeetingView from "../create-meeting-view";
 import LobbyView from "../lobby/LobbyView";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import AuthFailedPopup from "../../components/popups/auth-failed-popup";
 
 const LoginView = () => {
   const [adminUsername, setAdminUsername] = useState("");
@@ -17,6 +18,8 @@ const LoginView = () => {
   const userType: UserType = useSelector(
     (state: RootState) => state.auth.userType
   );
+
+  const [popup, setPopup] = useState<ReactElement>()
 
   async function attemptAdminSignIn(e: FormEvent) {
     e.preventDefault();
@@ -34,6 +37,12 @@ const LoginView = () => {
       studentPassword
     );
 
+     if (!res) {
+      setPopup(
+        <AuthFailedPopup/>
+      )
+     }
+
     setUserLoggedIn(res);
   }
 
@@ -48,8 +57,18 @@ const LoginView = () => {
       return <LobbyView />;
     }
   }
+
+  
+
   return (
     <div className="login-view">
+
+      <div className="popup-container">
+        <AnimatePresence>
+          { popup }
+        </AnimatePresence>
+      </div>
+
       <motion.div
         animate={{ scale: [1, 1.1, 1.1, 1, 1], animationTimingFunction: 'ease-in', animationDuration: '.13s' }}
         className="login-view-inner-content-panel"

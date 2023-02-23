@@ -1,0 +1,20 @@
+.popup {
+    position: absolute;
+    z-index: 40;
+    padding: 20px;
+    align-self: start;
+    border: none;
+    border-radius: 6px;
+    max-width: 250px;
+    font-size: .8rem;
+    text-align: center;
+    &.auth-failed-popup {
+        background-color: rgb(235, 68, 49);
+        top: 10px;
+        color: white;
+    }
+
+    left: calc(50vw - 125px);
+    right: calc(50vw - 125px);
+
+}
