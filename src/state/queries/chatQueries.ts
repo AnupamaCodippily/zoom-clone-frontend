@@ -4,15 +4,16 @@ import setupSocketIOForMessages, {
   ISocket,
   setupSocketListeners,
 } from "../../lib/sockets/setupSocketIO";
-import { getPeer,  peerId } from "../../lib/webrtc/create-peerjs-connection";
+import { getPeer, peerId } from "../../lib/webrtc/create-peerjs-connection";
 import IChatMessage from "../../types/Message";
+import room, { RoomState } from "../slices/room";
 import { store } from "../store";
 
 export type Room = string;
 
 export const api: any = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: ZOOM_CLONE_SERVER_URL ?? ""}),
+  baseQuery: fetchBaseQuery({ baseUrl: ZOOM_CLONE_SERVER_URL ?? "" }),
   endpoints: (build) => ({
     getMessages: build.query<IChatMessage[] | null, Room>({
       queryFn: async () => ({ data: null }),
@@ -27,11 +28,14 @@ export const api: any = createApi({
           // wait for the initial query to resolve before proceeding
           await cacheDataLoaded;
 
-          if (!socket) throw Error('unable to setup chat');
+          if (!socket) throw Error("unable to setup chat");
 
           setupSocketListeners(socket, updateCachedData);
-          
-          socket.emit('client-connected-to-meeting', { clientId: peerId, meetingId: store.getState().auth.roomName})
+
+          socket.emit("client-connected-to-meeting", {
+            clientId: peerId,
+            meetingId: store.getState().auth.roomName,
+          });
         } catch {
           console.log("An error occured when setting up a socket");
           // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,
@@ -47,11 +51,12 @@ export const api: any = createApi({
     sendMessage: build.mutation<any, IChatMessage>({
       queryFn: (chatMessageContent: IChatMessage) => {
         const socket = setupSocketIOForMessages();
-        const { id, meetingName, messageBody, roomId, senderName } = chatMessageContent;
+        const { id, meetingName, messageBody, roomId, senderName } =
+          chatMessageContent;
         return new Promise((resolve) => {
           socket?.emit(
             "client-send-message-to-server",
-            {id, meetingName, messageBody, roomId, senderName},
+            { id, meetingName, messageBody, roomId, senderName },
             (message: IChatMessage) => {
               resolve({ data: message });
             }
@@ -67,7 +72,7 @@ export const api: any = createApi({
         return new Promise((resolve) => {
           socket?.emit(
             "host-started-meeting",
-            {title, meetingId, hostPeerId},
+            { title, meetingId, hostPeerId },
             (message: any) => {
               resolve({ data: message });
             }
@@ -75,7 +80,6 @@ export const api: any = createApi({
         });
       },
     }),
-
 
     studentJoinMeeting: build.mutation<any, null>({
       queryFn: ({ meetingId }: any) => {
@@ -93,20 +97,31 @@ export const api: any = createApi({
       },
     }),
 
-
     hostStartCamOn: build.mutation<any, null>({
-      queryFn: ({  meetingId }: any) => {
+      queryFn: ({ meetingId }: any) => {
         const socket = setupSocketIOForMessages();
         return new Promise((resolve) => {
+          const roomState: RoomState = store.getState().room;
+          const { isCamOn, isMicOn, isScreenShared, displayingRemoteStream } =
+            roomState;
           socket?.emit(
             "host-turned-on-camera",
-            {  meetingId, hostPeerId: peerId },
+            {
+              meetingId,
+              hostPeerId: peerId,
+              meetingSettings: {
+                isCamOn,
+                isMicOn,
+                isScreenShared,
+                displayingRemoteStream,
+              },
+            },
             (message: any) => {
               resolve({ data: message });
             }
           );
         });
       },
-    })
+    }),
   }),
 });

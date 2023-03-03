@@ -11,6 +11,11 @@ export interface RoomState {
   playingMediaStream: MediaStream | null;
   participants: Participant[];
   displayingRemoteStream: boolean;
+  hostState: {
+    isHostMicOn: boolean;
+    isHostCamOn: boolean;
+    isHostScreenShared: boolean;
+  };
 }
 
 const initialState: RoomState = {
@@ -22,6 +27,11 @@ const initialState: RoomState = {
   playingMediaStream: null,
   participants: [],
   displayingRemoteStream: false,
+  hostState: {
+    isHostMicOn: false,
+    isHostCamOn: false,
+    isHostScreenShared: false,
+  },
 };
 
 export type MediaStreamMetaData = {
@@ -79,9 +89,22 @@ export const roomSlice = createSlice({
       }
     },
 
-    setIsDisplayingRemoteStream: (state: RoomState, action: PayloadAction<boolean>) => {
+    setIsDisplayingRemoteStream: (
+      state: RoomState,
+      action: PayloadAction<boolean>
+    ) => {
       state.displayingRemoteStream = action.payload;
-    }
+    },
+    setHostState: (
+      state: RoomState,
+      action: PayloadAction<{
+        isHostCamOn: boolean;
+        isHostScreenShared: boolean;
+        isHostMicOn: boolean;
+      }>
+    ) => {
+      if (!state.isHost) state.hostState = action.payload;
+    },
   },
 });
 
@@ -93,7 +116,8 @@ export const {
   addParticipant,
   removeParticipant,
   setMicOn,
-  setIsDisplayingRemoteStream
+  setIsDisplayingRemoteStream,
+  setHostState
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

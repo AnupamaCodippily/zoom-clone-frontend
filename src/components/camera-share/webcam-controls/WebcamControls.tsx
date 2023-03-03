@@ -14,7 +14,7 @@ import screenshareIcon from "../../../assets/icons/screenshare-icon.png";
 import endCallIcon from "../../../assets/icons/end-call-icon-9.jpg";
 import { api } from "../../../state/queries/chatQueries";
 import { endCalls } from "../../../lib/sockets/socketListeners";
-import { sendMediaStream } from "../../../lib/webrtc/send-media-stream";
+import restartPeerJSCall from "../../../lib/webrtc/restart-peerjs-call";
 
 const WebcamControls: React.FC = () => {
   const isMicOn = useSelector((state: RootState) => state.room.isMicOn);
@@ -22,6 +22,10 @@ const WebcamControls: React.FC = () => {
   const screenShareEnabled = useSelector(
     (state: RootState) => state.room.isScreenShared
   );
+  const displayingRemoteStream = useSelector(
+    (state: RootState) => state.room.displayingRemoteStream
+  );
+  const isHost = useSelector((state: RootState) => state.room.isHost);
   const meetingId = useSelector((state: RootState) => state.auth.roomName);
   const dispatch = useDispatch();
 
@@ -34,7 +38,9 @@ const WebcamControls: React.FC = () => {
       isMicOn,
       screenShareEnabled && !cameraOn // check here
     );
-    setLocalMediaStreamObject(mediaStreamData);
+    setLocalMediaStreamObject(mediaStreamData, {
+      remoteVideo: displayingRemoteStream,
+    });
   }
 
   /**
@@ -80,7 +86,9 @@ const WebcamControls: React.FC = () => {
         !isMicOn,
         screenShareEnabled
       );
-      setLocalMediaStreamObject(mediaStreamData);
+      setLocalMediaStreamObject(mediaStreamData, {
+        remoteVideo: displayingRemoteStream,
+      });
     }
   }
 
@@ -95,18 +103,25 @@ const WebcamControls: React.FC = () => {
     );
     const { audio, screenshare, video } = mediaStreamData;
     dispatch(setPlayingMediaStream({ audio, video, screenshare }));
-    setLocalMediaStreamObject(mediaStreamData);
-
+    setLocalMediaStreamObject(mediaStreamData, {
+      remoteVideo: displayingRemoteStream,
+    });
   }
 
   useEffect(() => {
     if (cameraOn || screenShareEnabled || isMicOn) {
-      dispatch(api.endpoints.hostStartCamOn.initiate({ meetingId }))
+      dispatch(api.endpoints.hostStartCamOn.initiate({ meetingId }));
     } else {
       endCalls();
     }
-  }, [cameraOn, isMicOn, screenShareEnabled])
-  
+  }, [cameraOn, isMicOn, screenShareEnabled]);
+
+  // useEffect(() => {
+  //   if (isHost)
+  //     if (isMicOn || screenShareEnabled || cameraOn) {
+  //       restartPeerJSCall();
+  //     }
+  // }, [cameraOn, isMicOn, screenShareEnabled, isHost]);
 
   return (
     <div className="webcam-controls">

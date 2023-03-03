@@ -4,6 +4,7 @@ import {
   addMessageToChat,
   updateMessageHistory,
 } from "../../state/slices/chat";
+import { RoomState, setHostState } from "../../state/slices/room";
 import { store } from "../../state/store";
 import IChatMessage from "../../types/Message";
 import { getPeer } from "../webrtc/create-peerjs-connection";
@@ -19,11 +20,6 @@ function setupOnReceiveMessageInRoom(
     console.log(args);
 
     store.dispatch(addMessageToChat(args));
-
-    // updateCachedDataMethod((draft: any[]) => {
-    //     const { username, body }= args;
-    //     console.log(draft)
-    // });
   });
 }
 
@@ -31,11 +27,11 @@ let callsList: MediaConnection[] = [];
 
 function setupOnReceiveHostPeerId(socket: Socket, _: any) {
   socket.on("server-sent-host-peerId-others", async (args) => {
-    console.log("The host has turned on their webcam");
+    console.log("The host has turned on their media");
     if (store.getState()["room"].isHost) {
       const ls = getLocalMediaStreamObject();
       if (ls)
-        args.clientIds.forEach(({peerId} : { peerId: string }) => {
+        args.clientIds.forEach(({ peerId }: { peerId: string }) => {
           const mediaConnection = getPeer().call(peerId, ls);
           callsList.push(mediaConnection);
           return mediaConnection;
@@ -47,7 +43,6 @@ function setupOnReceiveHostPeerId(socket: Socket, _: any) {
 function setupOnReceiveMessagesHistory(socket: Socket, _: any) {
   socket.on("server-ack-client-joining", async (args: any) => {
     console.log("received messages history");
-    console.log(args)
     store.dispatch(
       updateMessageHistory(
         args.messageHistory?.map(
@@ -56,11 +51,27 @@ function setupOnReceiveMessagesHistory(socket: Socket, _: any) {
             meetingName: message.meetingName,
             senderName: message.senderName,
             messageBody: message.messageBody,
-            roomId: message.meetingName
+            roomId: message.meetingName,
           })
         )
       )
     );
+  });
+}
+
+function setupOnReceiveHostSettings(socket: Socket, _: any) {
+  socket.on("server-sent-host-status-update", async (args: any) => {
+    console.log("host status updated");
+    if (args?.hostSettings) {
+      const { isCamOn, isMicOn, isScreenShared } = args.hostSettings;
+      store.dispatch(
+        setHostState({
+          isHostCamOn: isCamOn,
+          isHostMicOn: isMicOn,
+          isHostScreenShared: isScreenShared,
+        })
+      );
+    }
   });
 }
 
@@ -70,6 +81,22 @@ export function endCalls() {
   callsList = [];
 }
 
-const allListeners = [setupOnReceiveMessageInRoom, setupOnReceiveHostPeerId, setupOnReceiveMessagesHistory];
+export function getCallsList() {
+  return callsList;
+}
+
+export function setCallsList(newCallsList: MediaConnection[]) {
+  callsList = newCallsList;
+}
+//
+
+
+const allListeners = [
+  setupOnReceiveMessageInRoom,
+  setupOnReceiveHostPeerId,
+  setupOnReceiveMessagesHistory,
+  setupOnReceiveHostPeerId,
+  setupOnReceiveHostSettings,
+];
 
 export default allListeners;
