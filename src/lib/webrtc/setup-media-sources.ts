@@ -120,6 +120,7 @@ export function setLocalMediaStreamObject(
     store.dispatch(setPlayingMediaStream({ audio, video, screenshare }));
   } else {
     if (options.remoteVideo) {
+      
       if (!mediaStreamData) {
         setPlayingMediaStreamObjectToNull();
         return;
@@ -139,6 +140,10 @@ export function setLocalMediaStreamObject(
       store.dispatch(setPlayingMediaStream({ audio, video, screenshare }));
 
       store.dispatch(setIsDisplayingRemoteStream(true))
+    } else {
+      store.dispatch(setPlayingMediaStream({ audio:false, video: false, screenshare: false }));
+
+      store.dispatch(setIsDisplayingRemoteStream(false))
     }
   }
 }

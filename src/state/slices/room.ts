@@ -68,7 +68,7 @@ export const roomSlice = createSlice({
 
       if (state.displayingRemoteStream) {
         state.isCamOn = false;
-        state.isMicOn = true;
+        state.isMicOn = false;
         state.isScreenShared = false;
       } else {
         // apply other settings

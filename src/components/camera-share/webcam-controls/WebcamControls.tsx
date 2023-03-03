@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createNewAudioTrackForScreenshare,
@@ -12,6 +12,9 @@ import camIcon from "../../../assets/icons/video-cam-icon.png";
 import micIcon from "../../../assets/icons/mic-icon-1.png";
 import screenshareIcon from "../../../assets/icons/screenshare-icon.png";
 import endCallIcon from "../../../assets/icons/end-call-icon-9.jpg";
+import { api } from "../../../state/queries/chatQueries";
+import { endCalls } from "../../../lib/sockets/socketListeners";
+import { sendMediaStream } from "../../../lib/webrtc/send-media-stream";
 
 const WebcamControls: React.FC = () => {
   const isMicOn = useSelector((state: RootState) => state.room.isMicOn);
@@ -19,7 +22,7 @@ const WebcamControls: React.FC = () => {
   const screenShareEnabled = useSelector(
     (state: RootState) => state.room.isScreenShared
   );
-
+  const meetingId = useSelector((state: RootState) => state.auth.roomName);
   const dispatch = useDispatch();
 
   /**
@@ -95,6 +98,15 @@ const WebcamControls: React.FC = () => {
     setLocalMediaStreamObject(mediaStreamData);
 
   }
+
+  useEffect(() => {
+    if (cameraOn || screenShareEnabled || isMicOn) {
+      dispatch(api.endpoints.hostStartCamOn.initiate({ meetingId }))
+    } else {
+      endCalls();
+    }
+  }, [cameraOn, isMicOn, screenShareEnabled])
+  
 
   return (
     <div className="webcam-controls">

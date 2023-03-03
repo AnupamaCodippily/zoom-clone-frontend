@@ -13,7 +13,9 @@ const WebcamOn = () => {
   const localStreamSrc = useSelector(
     (state: RootState) => state.room.playingMediaStream
   );
-
+  const displayingRemoteStream = useSelector(
+    (state: RootState) => state.room.displayingRemoteStream
+  );
   const videoRef = useRef<any>(null);
 
   useEffect(() => {
@@ -21,12 +23,12 @@ const WebcamOn = () => {
       videoRef.current.srcObject = getLocalMediaStreamObject();
       videoRef.current.play();
     }
-  }, [localStreamSrc, isSelfMuted, isCamOn, isScreenShared ]);
+  }, [localStreamSrc, isSelfMuted, isCamOn, isScreenShared, displayingRemoteStream ]);
 
   return (
     <video
       ref={videoRef}
-      muted={isSelfMuted}
+      muted={true}
       autoPlay={true}
       playsInline={true}
       className={"webcam-on" + (isMainPresenter ? " webcam-main" : "")}

@@ -12,7 +12,7 @@ const RoomBottomPanel: React.FC<RoomBottomPanelProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const copyInviteToCliboard = () => {
+  const copyInviteToClipboard = () => {
     dispatch(setAsHost(true));
   };
 
@@ -29,7 +29,7 @@ const RoomBottomPanel: React.FC<RoomBottomPanelProps> = ({
       </button>
       <button
         className="room-bottom-panel-action room-bottom-invite-button"
-        onClick={copyInviteToCliboard}
+        onClick={copyInviteToClipboard}
       >
         Invite
       </button>

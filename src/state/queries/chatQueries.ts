@@ -22,7 +22,7 @@ export const api: any = createApi({
       ) {
         // create a websocket connection when the cache subscription starts (here we use socket.io)
         const socket: ISocket | undefined = setupSocketIOForMessages();
-        getPeer();
+        const _ = getPeer();
         try {
           // wait for the initial query to resolve before proceeding
           await cacheDataLoaded;
@@ -31,7 +31,7 @@ export const api: any = createApi({
 
           setupSocketListeners(socket, updateCachedData);
           
-          socket.emit('client-connected-to-meeting', { clientId: peerId, meetingRoomName: store.getState().auth.roomName})
+          socket.emit('client-connected-to-meeting', { clientId: peerId, meetingId: store.getState().auth.roomName})
         } catch {
           console.log("An error occured when setting up a socket");
           // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,
@@ -63,11 +63,11 @@ export const api: any = createApi({
     startMeeting: build.mutation<any, null>({
       queryFn: ({ title, meetingId }: any) => {
         const socket = setupSocketIOForMessages();
-
+        const hostPeerId = peerId;
         return new Promise((resolve) => {
           socket?.emit(
             "host-started-meeting",
-            {title, meetingId},
+            {title, meetingId, hostPeerId},
             (message: any) => {
               resolve({ data: message });
             }
@@ -85,6 +85,22 @@ export const api: any = createApi({
           socket?.emit(
             "student-joined-meeting",
             { meetingId, studentPeerId: _peerId },
+            (message: any) => {
+              resolve({ data: message });
+            }
+          );
+        });
+      },
+    }),
+
+
+    hostStartCamOn: build.mutation<any, null>({
+      queryFn: ({  meetingId }: any) => {
+        const socket = setupSocketIOForMessages();
+        return new Promise((resolve) => {
+          socket?.emit(
+            "host-turned-on-camera",
+            {  meetingId, hostPeerId: peerId },
             (message: any) => {
               resolve({ data: message });
             }

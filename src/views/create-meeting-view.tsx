@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import {
   hostCreateMeeting,
-  hostStartMeeting,
 } from "../lib/classroom/host-connect";
 import { CLASSROOMS_CLIENT_URL } from "../lib/constants/urls";
 import { RootState, store } from "../state/store";
@@ -24,7 +23,7 @@ const CreateMeetingView = () => {
   }
 
   function startMeeting() {
-    hostStartMeeting(title, meetingId);
+    // hostStartMeeting(title, meetingId);
     setMeetingActive(meetingId);
   }
 

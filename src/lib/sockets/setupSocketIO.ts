@@ -38,7 +38,9 @@ export default function setupSocketIOForMessages() {
 }
 
 export function setupSocketListeners(clientSocket: Socket, update: any) {
-  if (!clientSocket) debugger;
+  if (!clientSocket) {
+    debugger;
+  }
 
   socketListeners.forEach((action: any) => {
     action(clientSocket, update);
