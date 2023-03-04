@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import restartPeerJSCall from "../../lib/webrtc/restart-peerjs-call";
 import { getLocalMediaStreamObject } from "../../lib/webrtc/setup-media-sources";
 import { RootState } from "../../state/store";
 
@@ -22,15 +21,10 @@ const WebcamOn = () => {
 
   useEffect(() => {
     if (videoRef?.current) {
-
-      if (isHost && videoRef.current?.srcObject && videoRef.current.srcObject !== getLocalMediaStreamObject()) {
-        restartPeerJSCall();
-      }
-
       videoRef.current.srcObject = getLocalMediaStreamObject();
       videoRef.current.play();
     }
-  }, [localStreamSrc, isSelfMuted, isCamOn, isScreenShared, displayingRemoteStream ]);
+  }, [localStreamSrc, isSelfMuted, isCamOn, isScreenShared, displayingRemoteStream, isHost]);
 
   return (
     <video
