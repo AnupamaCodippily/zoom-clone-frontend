@@ -1,7 +1,10 @@
 export default interface Participant {
-    id: number,
-    name: string,
-    isMuted: boolean,
-    isCamOn: boolean,
-    isSharing: boolean,
+    name?: string;
+    meetingId: string;
+    settings?: {
+      video: boolean;
+      mic: boolean;
+      allowedVideo: boolean;
+    };
+    peerId: string;
 }

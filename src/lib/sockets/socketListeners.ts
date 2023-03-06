@@ -4,9 +4,10 @@ import {
   addMessageToChat,
   updateMessageHistory,
 } from "../../state/slices/chat";
-import { RoomState, setHostState } from "../../state/slices/room";
+import { setHostState, setParticipantsList } from "../../state/slices/room";
 import { store } from "../../state/store";
 import IChatMessage from "../../types/Message";
+import Participant from "../../types/Participant";
 import { getPeer } from "../webrtc/create-peerjs-connection";
 import { getLocalMediaStreamObject } from "../webrtc/setup-media-sources";
 
@@ -28,7 +29,7 @@ let callsList: MediaConnection[] = [];
 function setupOnReceiveHostPeerId(socket: Socket, _: any) {
   socket.on("server-sent-host-peerId-others", async (args) => {
     console.log("The host has turned on their media");
-    if (store.getState()["room"].isHost) {
+    if (store.getState()?.room?.isHost) {
       const ls = getLocalMediaStreamObject();
       if (ls)
         args.clientIds.forEach(({ peerId }: { peerId: string }) => {
@@ -75,6 +76,25 @@ function setupOnReceiveHostSettings(socket: Socket, _: any) {
   });
 }
 
+/**
+ * when a new client joins, all other clients should be notified, and this listener should execute on
+ * each client
+ */
+function onReceiveNewClientJoinedInfo(socket: Socket, _: any) {
+  socket.on("server-emit-new-client-joined", async (args: any) => {
+    console.log("another-client-joined-the-meeting");
+
+    if (args?.participants) {
+      const newParticipantsList: Participant[] = [];
+
+      for (const participant of args.participants) {
+        newParticipantsList.push(participant);
+      }
+      store.dispatch(setParticipantsList(newParticipantsList));
+    }
+  });
+}
+
 // TODO: refactor
 export function endCalls() {
   callsList.forEach((conn) => conn?.close());
@@ -90,13 +110,13 @@ export function setCallsList(newCallsList: MediaConnection[]) {
 }
 //
 
-
 const allListeners = [
   setupOnReceiveMessageInRoom,
   setupOnReceiveHostPeerId,
   setupOnReceiveMessagesHistory,
   setupOnReceiveHostPeerId,
   setupOnReceiveHostSettings,
+  onReceiveNewClientJoinedInfo,
 ];
 
 export default allListeners;

@@ -5,7 +5,7 @@ interface ParticipantProps {
     participant: Participant
 }
 
-const Participant: React.FC<ParticipantProps> = ({participant}) => {
+const ParticipantComponent: React.FC<ParticipantProps> = ({participant}) => {
 
     if (!participant) return null;
 
@@ -14,9 +14,9 @@ const Participant: React.FC<ParticipantProps> = ({participant}) => {
         {participant.name}
     </h4>
 
-    { participant.isMuted && "(Muted)" }
-    { participant.isSharing && "(Sharing)" }
-    { !participant.isCamOn && "(Camera off)"  }
+    { !participant.settings?.mic && "(Muted)" }
+    { participant.settings?.video && "(Sharing)" }
+    { participant.settings?.video && "(Camera off)"  }
 
   </div>;
 };

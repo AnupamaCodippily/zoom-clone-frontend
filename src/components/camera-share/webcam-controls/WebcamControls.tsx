@@ -14,7 +14,7 @@ import screenshareIcon from "../../../assets/icons/screenshare-icon.png";
 import endCallIcon from "../../../assets/icons/end-call-icon-9.jpg";
 import { api } from "../../../state/queries/chatQueries";
 import { endCalls } from "../../../lib/sockets/socketListeners";
-import restartPeerJSCall from "../../../lib/webrtc/restart-peerjs-call";
+import handleMicToggle from "../../../lib/presentation/handle-mic-toggle";
 
 const WebcamControls: React.FC = () => {
   const isMicOn = useSelector((state: RootState) => state.room.isMicOn);
@@ -25,7 +25,7 @@ const WebcamControls: React.FC = () => {
   const displayingRemoteStream = useSelector(
     (state: RootState) => state.room.displayingRemoteStream
   );
-  const isHost = useSelector((state: RootState) => state.room.isHost);
+  
   const meetingId = useSelector((state: RootState) => state.auth.roomName);
   const dispatch = useDispatch();
 
@@ -81,14 +81,16 @@ const WebcamControls: React.FC = () => {
 
       // setLocalMediaStreamObject(lmsObj);
     } else {
-      const mediaStreamData = await getLocalMediaStream(
-        cameraOn,
-        !isMicOn,
-        screenShareEnabled
-      );
-      setLocalMediaStreamObject(mediaStreamData, {
-        remoteVideo: displayingRemoteStream,
-      });
+      // const mediaStreamData = await getLocalMediaStream(
+      //   cameraOn,
+      //   !isMicOn,
+      //   screenShareEnabled
+      // );
+      // setLocalMediaStreamObject(mediaStreamData, {
+      //   remoteVideo: displayingRemoteStream,
+      // });
+
+      handleMicToggle();
     }
   }
 
@@ -114,14 +116,7 @@ const WebcamControls: React.FC = () => {
     } else {
       endCalls();
     }
-  }, [cameraOn, isMicOn, screenShareEnabled]);
-
-  // useEffect(() => {
-  //   if (isHost)
-  //     if (isMicOn || screenShareEnabled || cameraOn) {
-  //       restartPeerJSCall();
-  //     }
-  // }, [cameraOn, isMicOn, screenShareEnabled, isHost]);
+  }, [cameraOn, isMicOn, screenShareEnabled, dispatch, meetingId]);
 
   return (
     <div className="webcam-controls">
@@ -156,7 +151,7 @@ const WebcamControls: React.FC = () => {
           <img src={screenshareIcon} alt="screen share icon" />
         </button>
         <button className="active-webcam-control end-meeting-button">
-          <img src={endCallIcon} alt="end meeting" />{" "}
+          <img src={endCallIcon} alt="end meeting" onClick={() => endCalls()}/>{" "}
         </button>
       </div>
     </div>

@@ -4,7 +4,6 @@ import {
   setPlayingMediaStream,
 } from "../../state/slices/room";
 import { store } from "../../state/store";
-import restartPeerJSCall from "./restart-peerjs-call";
 
 export let localMediaStream: MediaStream | null = null;
 
@@ -100,6 +99,7 @@ export function setLocalMediaStreamObject(
   mediaStreamData: MediaStreamCreationData | null,
   options?: any
 ) {
+
   if (!options || !options["remoteVideo"]) {
     if (!mediaStreamData) {
       setPlayingMediaStreamObjectToNull();
@@ -157,14 +157,14 @@ export function setLocalMediaStreamObject(
     }
   }
 
-  if (localMediaStream !== null && mediaStreamData) {
-    const { audio, video, screenshare } = mediaStreamData;
+  // if (localMediaStream !== null && mediaStreamData) {
+  //   const { audio, video, screenshare } = mediaStreamData;
 
-    const { isMainPresenter, isHost }: RoomState = store.getState().room;
+  //   const { isMainPresenter, isHost }: RoomState = store.getState().room;
 
-    const userIsPresenting = isMainPresenter || isHost;
-    if (userIsPresenting && (audio || video || screenshare)) {
-      restartPeerJSCall();
-    }
-  }
+  //   const userIsPresenting = isMainPresenter || isHost;
+  //   if (userIsPresenting && (audio || video || screenshare)) {
+  //     restartPeerJSCall();
+  //   }
+  // }
 }

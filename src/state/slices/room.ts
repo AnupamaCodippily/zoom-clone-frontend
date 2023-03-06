@@ -3,15 +3,14 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import Participant from "../../types/Participant";
 
 export interface RoomState {
-  isMainPresenter: boolean;
-  isHost: boolean;
-  isMicOn: boolean;
-  isCamOn: boolean;
-  isScreenShared: boolean;
-  playingMediaStream: MediaStream | null;
-  participants: Participant[];
-  displayingRemoteStream: boolean;
-  hostState: {
+  isMainPresenter: boolean; // is this person the one sharing media that others see on the screen
+  isHost: boolean; // is this person the meeting/room host
+  isMicOn: boolean; // is this client's mic on. Important: We should be able to see the webcam stream (below) but not play the mic stream on the same client.
+  isCamOn: boolean; // is this client's webcam on
+  isScreenShared: boolean; // is this client's screen being shared
+  participants: Participant[]; // list of non-host participants
+  displayingRemoteStream: boolean; // are we displaying our own stream or a remote one?
+  hostState: {   // if this is not the host, what state is the host in?.
     isHostMicOn: boolean;
     isHostCamOn: boolean;
     isHostScreenShared: boolean;
@@ -19,12 +18,11 @@ export interface RoomState {
 }
 
 const initialState: RoomState = {
-  isMainPresenter: true,
+  isMainPresenter: false,
   isHost: false,
   isMicOn: false,
   isCamOn: false,
   isScreenShared: false,
-  playingMediaStream: null,
   participants: [],
   displayingRemoteStream: false,
   hostState: {
@@ -60,6 +58,10 @@ export const roomSlice = createSlice({
       );
     },
 
+    setParticipantsList: (state, action: PayloadAction<Participant[]>) => {
+      state.participants = action.payload;
+    },
+
     setMicOn: (state: RoomState, action: PayloadAction<boolean>) => {
       state.isMicOn = action.payload;
     },
@@ -68,22 +70,14 @@ export const roomSlice = createSlice({
       state: RoomState,
       action: PayloadAction<MediaStreamMetaData>
     ) => {
-      // stop any active streams
-      // state.playingMediaStream?.getTracks().forEach(function (track) {
-      //   track.stop();
-      // });
-
-      // // set the mediastream
-      // state.playingMediaStream = action.payload.mediaStream;
-
       if (state.displayingRemoteStream) {
         state.isCamOn = false;
-        state.isMicOn = false;
+        // state.isMicOn = false;
         state.isScreenShared = false;
       } else {
         // apply other settings
         state.isCamOn = action.payload.video;
-        state.isMicOn = action.payload.audio;
+        // state.isMicOn = action.payload.audio;
         state.isScreenShared =
           action.payload.screenshare && !action.payload.video; // prevent both happening at the same time
       }
@@ -113,6 +107,7 @@ export const {
   setAsHost,
   setAsMainPresenter,
   setPlayingMediaStream,
+  setParticipantsList,
   addParticipant,
   removeParticipant,
   setMicOn,
