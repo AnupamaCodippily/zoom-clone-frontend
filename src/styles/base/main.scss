@@ -3,7 +3,8 @@
 @import url(_util.scss);
 
 :root {
-    --main-foreground : #5C0087;
+    // --main-foreground : #5C0087;
+    --main-foreground : rgb(21, 21, 21);
     --secondary-foreground: rgba(92, 0, 135, .15);
-    --secondary-background: rgb(244, 238, 247);
+    --secondary-background: rgb(21,21,21);
 }

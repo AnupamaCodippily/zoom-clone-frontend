@@ -1,4 +1,4 @@
-export default interface Participant {
+export default interface IParticipant {
     name?: string;
     meetingId: string;
     settings?: {

@@ -2,6 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import WebcamVideo from "../../components/camera-share/WebcamVideo";
+import ParticipantsContainer from "../../components/participants/participants-container";
 import RoomBottomPanel from "../../components/room-bottom-panel/bottom-panel";
 import RoomSidePanel from "../../components/room-side-panel/RoomSidePanel";
 import RoomTopPanel from "../../components/room-top-panel/room-top-panel";
@@ -15,7 +16,9 @@ interface RoomViewProps {
 }
 
 const RoomView: React.FC<RoomViewProps> = ({ children }) => {
+
   api.endpoints.getMessages.useQuery("blah");
+  
 
   const [chatEnabled, setChatEnabled] = useState(false);
 
@@ -53,7 +56,7 @@ const RoomView: React.FC<RoomViewProps> = ({ children }) => {
         );
       }
     },
-    [dispatch]
+    [dispatch, meetingTitle, roomName, userType]
   );
 
   useEffect(() => {
@@ -64,6 +67,7 @@ const RoomView: React.FC<RoomViewProps> = ({ children }) => {
     <div className="room-container">
       <RoomTopPanel />
       <div className="flex-col flex-col-center full-screen-height room-cam-and-bottom-panel">
+        <ParticipantsContainer/>
         <WebcamVideo />
         <RoomBottomPanel
           chatEnabled={chatEnabled}

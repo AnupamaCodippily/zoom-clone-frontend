@@ -35,16 +35,16 @@ export async function getLocalMediaStream(
   screenshare: boolean
 ): Promise<MediaStreamCreationData> {
   if (!screenshare) {
-    if (!(audioOn || videoOn)) {
-      setPlayingMediaStreamObjectToNull();
+    // if (!(audioOn || videoOn)) {
+    //   setPlayingMediaStreamObjectToNull();
 
-      return {
-        audio: audioOn,
-        video: videoOn,
-        screenshare: screenshare,
-        mediaStream: null,
-      };
-    }
+    //   return {
+    //     audio: audioOn,
+    //     video: videoOn,
+    //     screenshare: screenshare,
+    //     mediaStream: null,
+    //   };
+    // }
 
     const localStream = await navigator.mediaDevices.getUserMedia({
       video: videoOn,

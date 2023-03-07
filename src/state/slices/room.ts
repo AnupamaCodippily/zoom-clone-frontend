@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import Participant from "../../types/Participant";
+import IParticipant from "../../types/Participant";
 
 export interface RoomState {
   isMainPresenter: boolean; // is this person the one sharing media that others see on the screen
@@ -8,9 +8,10 @@ export interface RoomState {
   isMicOn: boolean; // is this client's mic on. Important: We should be able to see the webcam stream (below) but not play the mic stream on the same client.
   isCamOn: boolean; // is this client's webcam on
   isScreenShared: boolean; // is this client's screen being shared
-  participants: Participant[]; // list of non-host participants
+  participants: IParticipant[]; // list of non-host participants
   displayingRemoteStream: boolean; // are we displaying our own stream or a remote one?
-  hostState: {   // if this is not the host, what state is the host in?.
+  hostState: {
+    // if this is not the host, what state is the host in?.
     isHostMicOn: boolean;
     isHostCamOn: boolean;
     isHostScreenShared: boolean;
@@ -48,17 +49,20 @@ export const roomSlice = createSlice({
     setAsHost: (state, action: PayloadAction<boolean>) => {
       state.isHost = action.payload;
     },
-    addParticipant: (state, action: PayloadAction<Participant>) => {
-      state.participants.push(action.payload);
+    addParticipant: (state, action: PayloadAction<IParticipant>) => {
+      if (!(state.participants.find((p) => p.name == action.payload.name))) {
+        state.participants.push(action.payload);
+      }
     },
 
-    removeParticipant: (state, action: PayloadAction<Participant>) => {
+    removeParticipant: (state, action: PayloadAction<IParticipant>) => {
       state.participants = state.participants.filter(
-        (participant: Participant) => participant.id !== action.payload.id
+        (participant: IParticipant) =>
+          participant.peerId !== action.payload.peerId
       );
     },
 
-    setParticipantsList: (state, action: PayloadAction<Participant[]>) => {
+    setParticipantsList: (state, action: PayloadAction<IParticipant[]>) => {
       state.participants = action.payload;
     },
 
@@ -112,7 +116,7 @@ export const {
   removeParticipant,
   setMicOn,
   setIsDisplayingRemoteStream,
-  setHostState
+  setHostState,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

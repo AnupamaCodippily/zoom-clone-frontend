@@ -1,15 +1,15 @@
 import React from "react";
-import Participant from "../../types/Participant";
+import IParticipant from "../../types/Participant";
 
 interface ParticipantProps {
-    participant: Participant
+    participant: IParticipant
 }
 
 const ParticipantComponent: React.FC<ParticipantProps> = ({participant}) => {
 
     if (!participant) return null;
 
-  return <div>
+  return <div className="participant-block">
     <h4>
         {participant.name}
     </h4>
@@ -18,7 +18,9 @@ const ParticipantComponent: React.FC<ParticipantProps> = ({participant}) => {
     { participant.settings?.video && "(Sharing)" }
     { participant.settings?.video && "(Camera off)"  }
 
+    <video className="participant-video"></video>
+
   </div>;
 };
 
-export default Participant;
+export default ParticipantComponent;

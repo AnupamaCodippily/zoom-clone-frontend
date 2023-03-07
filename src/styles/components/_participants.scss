@@ -1,0 +1,17 @@
+.participants-list-container {
+    display: flex;
+    flex-direction: column;
+    position:absolute;
+    left: 10px;
+    top: 110px;
+    width: 200px;
+    height: 600px;
+    z-index: 10;
+    border: salmon solid 2px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    .participant-name{
+        position: absolute;
+    }
+}

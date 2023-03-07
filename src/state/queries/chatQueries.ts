@@ -32,7 +32,7 @@ export const api: any = createApi({
 
           setupSocketListeners(socket, updateCachedData);
 
-          socket.emit("client-connected-to-meeting", {
+          socket.emit("host-connected-to-meeting", {
             clientId: peerId,
             meetingId: store.getState().auth.roomName,
           });
@@ -85,10 +85,11 @@ export const api: any = createApi({
       queryFn: ({ meetingId }: any) => {
         const socket = setupSocketIOForMessages();
         const _peerId = peerId;
+        const name = store.getState().auth.username;
         return new Promise((resolve) => {
           socket?.emit(
             "student-joined-meeting",
-            { meetingId, studentPeerId: _peerId },
+            { meetingId, studentPeerId: _peerId, name },
             (message: any) => {
               resolve({ data: message });
             }

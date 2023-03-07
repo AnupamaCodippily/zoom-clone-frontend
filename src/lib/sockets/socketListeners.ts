@@ -4,13 +4,18 @@ import {
   addMessageToChat,
   updateMessageHistory,
 } from "../../state/slices/chat";
-import { setHostState, setParticipantsList } from "../../state/slices/room";
+import { addParticipant, setHostState, setParticipantsList } from "../../state/slices/room";
 import { store } from "../../state/store";
 import IChatMessage from "../../types/Message";
-import Participant from "../../types/Participant";
+import IParticipant from "../../types/Participant";
 import { getPeer } from "../webrtc/create-peerjs-connection";
 import { getLocalMediaStreamObject } from "../webrtc/setup-media-sources";
 
+/**
+ * When a new message is added to the chat
+ * @param socket 
+ * @param updateCachedDataMethod 
+ */
 function setupOnReceiveMessageInRoom(
   socket: Socket,
   updateCachedDataMethod: any
@@ -26,6 +31,9 @@ function setupOnReceiveMessageInRoom(
 
 let callsList: MediaConnection[] = [];
 
+/**
+ * if this is the host, they will receive the list of peerIds of participants
+ */
 function setupOnReceiveHostPeerId(socket: Socket, _: any) {
   socket.on("server-sent-host-peerId-others", async (args) => {
     console.log("The host has turned on their media");
@@ -41,9 +49,12 @@ function setupOnReceiveHostPeerId(socket: Socket, _: any) {
   });
 }
 
-function setupOnReceiveMessagesHistory(socket: Socket, _: any) {
-  socket.on("server-ack-client-joining", async (args: any) => {
-    console.log("received messages history");
+/**
+ * On the server acknowledging the host joined, they will receive the messages history and the list of other participants
+ */
+function setupOnReceiveMeetingHistory(socket: Socket, _: any) {
+  socket.on("server-ack-host-joining", async (args: any) => {
+    console.log("received meeting history");
     store.dispatch(
       updateMessageHistory(
         args.messageHistory?.map(
@@ -57,6 +68,8 @@ function setupOnReceiveMessagesHistory(socket: Socket, _: any) {
         )
       )
     );
+    const participants: IParticipant[] = args?.participants ? Object.values(args.participants) : [];
+    store.dispatch(setParticipantsList(participants))
   });
 }
 
@@ -81,18 +94,28 @@ function setupOnReceiveHostSettings(socket: Socket, _: any) {
  * each client
  */
 function onReceiveNewClientJoinedInfo(socket: Socket, _: any) {
-  socket.on("server-emit-new-client-joined", async (args: any) => {
+  socket.on("server-emit-new-client-joined", (args: any) => {
     console.log("another-client-joined-the-meeting");
+    if (args?.participant) {
+      store.dispatch(addParticipant(args.participant))
+    }
+  });
+}
 
+/**
+ * when a new client joins, they will be sent a list of all the other participants, including the host
+ */
+function onReceiveMeetingParticipantsList(socket: Socket, _: any) {
+  socket.on('server-sent-client-participants-list', async (args: any) => {
     if (args?.participants) {
-      const newParticipantsList: Participant[] = [];
-
-      for (const participant of args.participants) {
+      const newParticipantsList: IParticipant[] = [];
+      console.log(Object.values(args.participants))
+      for (const participant of Object.values<IParticipant>(args.participants)) {
         newParticipantsList.push(participant);
       }
       store.dispatch(setParticipantsList(newParticipantsList));
     }
-  });
+  })
 }
 
 // TODO: refactor
@@ -113,10 +136,11 @@ export function setCallsList(newCallsList: MediaConnection[]) {
 const allListeners = [
   setupOnReceiveMessageInRoom,
   setupOnReceiveHostPeerId,
-  setupOnReceiveMessagesHistory,
+  setupOnReceiveMeetingHistory,
   setupOnReceiveHostPeerId,
   setupOnReceiveHostSettings,
   onReceiveNewClientJoinedInfo,
+  onReceiveMeetingParticipantsList,
 ];
 
 export default allListeners;
