@@ -5,8 +5,17 @@ import {
 } from "../../state/slices/room";
 import { store } from "../../state/store";
 
+/**
+ * from the local navigator's user media
+ */
 export let localMediaStream: MediaStream | null = null;
 
+/**
+ * This can be your own stream if you are the host or the presenter
+ */
+let mainPresenterMediaStream: MediaStream | null = null;
+
+// interface
 export type MediaStreamCreationData = {
   video: boolean;
   audio: boolean;
@@ -35,21 +44,15 @@ export async function getLocalMediaStream(
   screenshare: boolean
 ): Promise<MediaStreamCreationData> {
   if (!screenshare) {
-    // if (!(audioOn || videoOn)) {
-    //   setPlayingMediaStreamObjectToNull();
 
-    //   return {
-    //     audio: audioOn,
-    //     video: videoOn,
-    //     screenshare: screenshare,
-    //     mediaStream: null,
-    //   };
-    // }
+    let localStream = new MediaStream();
 
-    const localStream = await navigator.mediaDevices.getUserMedia({
-      video: videoOn,
-      audio: audioOn,
-    });
+    if (videoOn || audioOn) {
+      localStream = await navigator.mediaDevices.getUserMedia({
+        video: videoOn,
+        audio: audioOn,
+      });
+    }
 
     const result = Object.freeze({
       audio: audioOn,
@@ -57,8 +60,6 @@ export async function getLocalMediaStream(
       screenshare: screenshare,
       mediaStream: localStream,
     });
-
-    // localMediaStream = localStream;
 
     return result;
   } else {
@@ -78,8 +79,18 @@ export async function getLocalMediaStream(
   }
 }
 
-export function getLocalMediaStreamObject() {
-  return localMediaStream;
+export async function getLocalMediaStreamObject() {
+  if(localMediaStream) {
+    return localMediaStream;
+  }
+
+  const { isCamOn, isMicOn, isScreenShared } : RoomState = store.getState().room;
+
+  const data = await getLocalMediaStream(isCamOn, isMicOn, isScreenShared);
+
+  localMediaStream = data.mediaStream;
+
+  return data.mediaStream;
 }
 
 export function setPlayingMediaStreamObjectToNull() {
@@ -99,7 +110,6 @@ export function setLocalMediaStreamObject(
   mediaStreamData: MediaStreamCreationData | null,
   options?: any
 ) {
-
   if (!options || !options["remoteVideo"]) {
     if (!mediaStreamData) {
       setPlayingMediaStreamObjectToNull();
@@ -118,7 +128,7 @@ export function setLocalMediaStreamObject(
       return;
     }
     // setPlayingMediaStreamObjectToNull();
-    localMediaStream?.getTracks().forEach((track) => track.stop());
+    // localMediaStream?.getTracks().forEach((track) => track.stop());
 
     localMediaStream = mediaStreamData?.mediaStream;
 
@@ -156,15 +166,40 @@ export function setLocalMediaStreamObject(
       store.dispatch(setIsDisplayingRemoteStream(false));
     }
   }
+}
 
-  // if (localMediaStream !== null && mediaStreamData) {
-  //   const { audio, video, screenshare } = mediaStreamData;
+export function setMainPresentorMediaStream(mediaStream: MediaStream) {
+  mainPresenterMediaStream = mediaStream;
+}
 
-  //   const { isMainPresenter, isHost }: RoomState = store.getState().room;
+export function getMainPresentorMediaStream() {
+  return mainPresenterMediaStream;
+}
 
-  //   const userIsPresenting = isMainPresenter || isHost;
-  //   if (userIsPresenting && (audio || video || screenshare)) {
-  //     restartPeerJSCall();
-  //   }
-  // }
+export async function updateLocalMediaStreamTracks(
+  camera: boolean,
+  audio: boolean,
+  screenshare: boolean
+) {
+  if (camera) {
+    const videoTracks = localMediaStream?.getVideoTracks();
+    if (!videoTracks || !videoTracks[0]) {
+      const localVideoTrack = (
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      ).getVideoTracks()[0];
+
+      localMediaStream?.addTrack(localVideoTrack);
+    }
+  } else {
+    const videoTracks = localMediaStream?.getVideoTracks();
+
+    if (videoTracks)
+      for (var i = 0; i < (videoTracks?.length ?? 0); i++) {
+        localMediaStream?.removeTrack(videoTracks[i]);
+      }
+  }
+
+  if (!(camera || audio || screenshare)) {
+    localMediaStream = new MediaStream();
+  }
 }

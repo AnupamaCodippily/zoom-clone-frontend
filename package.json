@@ -17,7 +17,7 @@
     "crypto": "^1.0.1",
     "crypto-js": "^4.1.1",
     "framer-motion": "^8.5.5",
-    "peerjs": "^1.4.7",
+    "peerjs": "^1.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",

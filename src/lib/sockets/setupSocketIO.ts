@@ -30,8 +30,6 @@ export default function setupSocketIOForMessages() {
       transports: ["websocket", "polling"],
       secure: true,
     });
-
-    clientSocket.on('connect', () => console.log(clientSocket))
   }
 
   return clientSocket;

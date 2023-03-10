@@ -19,11 +19,8 @@ const WebcamVideo: React.FC = () => {
   return (
     <div className="webcam webcam-container">
       <div className="webcam-video-container">
-        {isWebcamOn || isScreenShared || isRemoteScreenSharing || isMicOn ? (
           <WebcamOn />
-        ) : (
-          <WebcamOff />
-        )}
+      
         <WebcamControls />
       </div>
     </div>

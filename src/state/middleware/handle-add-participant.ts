@@ -1,4 +1,3 @@
-import makeCallsToAllOtherParticipants from "../../lib/webrtc/make-calls-to-participants";
 
 const handleAddParticipantMiddleware =
   (storeAPI: any) => (next: any) => (action: any) => {
@@ -6,7 +5,6 @@ const handleAddParticipantMiddleware =
       // console.log("dispatching", action);
 
       if (action.payload) {
-        makeCallsToAllOtherParticipants(action.payload);
       }
     }
     let result = next(action);

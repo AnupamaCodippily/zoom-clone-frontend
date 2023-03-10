@@ -8,7 +8,7 @@ import { addParticipant, setHostState, setParticipantsList } from "../../state/s
 import { store } from "../../state/store";
 import IChatMessage from "../../types/Message";
 import IParticipant from "../../types/Participant";
-import { getPeer } from "../webrtc/create-peerjs-connection";
+import makeCallsToAllOtherParticipants from "../webrtc/make-calls-to-participants";
 import { getLocalMediaStreamObject } from "../webrtc/setup-media-sources";
 
 /**
@@ -20,8 +20,6 @@ function setupOnReceiveMessageInRoom(
   socket: Socket,
   updateCachedDataMethod: any
 ) {
-  console.log("setupOnReceiveMessageInRoom");
-
   socket.on("server-send-messages-to-clients", (args) => {
     console.log(args);
 
@@ -37,20 +35,20 @@ let callsList: MediaConnection[] = [];
 function setupOnReceiveHostPeerId(socket: Socket, _: any) {
   socket.on("server-sent-host-peerId-others", async (args) => {
     console.log("The host has turned on their media");
-    if (store.getState()?.room?.isHost) {
-      const ls = getLocalMediaStreamObject();
-      if (ls)
-        args.clientIds.forEach(({ peerId }: { peerId: string }) => {
-          const mediaConnection = getPeer().call(peerId, ls);
-          callsList.push(mediaConnection);
-          return mediaConnection;
-        });
-    }
+    // if (store.getState()?.room?.isHost) {
+    //   const ls = getLocalMediaStreamObject();
+    //   if (ls)
+    //     args.clientIds.forEach(({ peerId }: { peerId: string }) => {
+    //       const mediaConnection = getPeer().call(peerId, ls);
+    //       callsList.push(mediaConnection);
+    //       return mediaConnection;
+    //     });
+    // }
   });
 }
 
 /**
- * On the server acknowledging the host joined, they will receive the messages history and the list of other participants
+ * Upon the server acknowledging the host joined, they will receive the messages history and the list of other participants
  */
 function setupOnReceiveMeetingHistory(socket: Socket, _: any) {
   socket.on("server-ack-host-joining", async (args: any) => {
@@ -70,8 +68,10 @@ function setupOnReceiveMeetingHistory(socket: Socket, _: any) {
     );
     const participants: IParticipant[] = args?.participants ? Object.values(args.participants) : [];
     store.dispatch(setParticipantsList(participants))
+    makeCallsToAllOtherParticipants(participants);
   });
 }
+
 
 function setupOnReceiveHostSettings(socket: Socket, _: any) {
   socket.on("server-sent-host-status-update", async (args: any) => {
@@ -90,7 +90,7 @@ function setupOnReceiveHostSettings(socket: Socket, _: any) {
 }
 
 /**
- * when a new client joins, all other clients should be notified, and this listener should execute on
+ * when a new client/participant joins, all other clients should be notified, and this listener should execute on
  * each client
  */
 function onReceiveNewClientJoinedInfo(socket: Socket, _: any) {
@@ -103,17 +103,18 @@ function onReceiveNewClientJoinedInfo(socket: Socket, _: any) {
 }
 
 /**
- * when a new client joins, they will be sent a list of all the other participants, including the host
+ * when a new client/participant joins, they will be sent a list of all the other participants, including the host
  */
 function onReceiveMeetingParticipantsList(socket: Socket, _: any) {
   socket.on('server-sent-client-participants-list', async (args: any) => {
     if (args?.participants) {
       const newParticipantsList: IParticipant[] = [];
-      console.log(Object.values(args.participants))
+
       for (const participant of Object.values<IParticipant>(args.participants)) {
         newParticipantsList.push(participant);
       }
       store.dispatch(setParticipantsList(newParticipantsList));
+      makeCallsToAllOtherParticipants(newParticipantsList);
     }
   })
 }
@@ -135,9 +136,7 @@ export function setCallsList(newCallsList: MediaConnection[]) {
 
 const allListeners = [
   setupOnReceiveMessageInRoom,
-  setupOnReceiveHostPeerId,
   setupOnReceiveMeetingHistory,
-  setupOnReceiveHostPeerId,
   setupOnReceiveHostSettings,
   onReceiveNewClientJoinedInfo,
   onReceiveMeetingParticipantsList,

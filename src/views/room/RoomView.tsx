@@ -7,8 +7,9 @@ import RoomBottomPanel from "../../components/room-bottom-panel/bottom-panel";
 import RoomSidePanel from "../../components/room-side-panel/RoomSidePanel";
 import RoomTopPanel from "../../components/room-top-panel/room-top-panel";
 import { UserType } from "../../lib/constants/user-types";
+import { updateRemoteMediaStreamTracks } from "../../lib/webrtc/update-media-tracks";
 import { api } from "../../state/queries/chatQueries";
-import { setAsHost } from "../../state/slices/room";
+import { RoomState, setAsHost } from "../../state/slices/room";
 import { RootState } from "../../state/store";
 
 interface RoomViewProps {
@@ -16,9 +17,7 @@ interface RoomViewProps {
 }
 
 const RoomView: React.FC<RoomViewProps> = ({ children }) => {
-
   api.endpoints.getMessages.useQuery("blah");
-  
 
   const [chatEnabled, setChatEnabled] = useState(false);
 
@@ -30,44 +29,42 @@ const RoomView: React.FC<RoomViewProps> = ({ children }) => {
   );
   const userType = useSelector((state: RootState) => state.auth.userType);
 
+  const roomState: RoomState = useSelector((state: RootState) => state.room)
+
   function enableChat() {
     setChatEnabled((enabled) => !enabled);
   }
 
-  const doDispatchCallBack = useCallback(
-    function doDispatch() {
-      console.log("dispatching to server...");
-
-      if (userType === UserType.ADMIN) {
-        dispatch(
-          api.endpoints.startMeeting.initiate({
-            title: meetingTitle,
-            meetingId: roomName,
-          })
-        );
-        dispatch(setAsHost(true));
-      }
-
-      if (userType === UserType.STUDENT) {
-        dispatch(
-          api.endpoints.studentJoinMeeting.initiate({
-            meetingId: roomName,
-          })
-        );
-      }
-    },
-    [dispatch, meetingTitle, roomName, userType]
-  );
+  useEffect(() => {
+    const { isCamOn, isMicOn, isScreenShared } = roomState;
+    // updateRemoteMediaStreamTracks( isCamOn, isMicOn, isScreenShared);
+  }, [])
 
   useEffect(() => {
-    doDispatchCallBack();
-  }, []);
+    if (userType === UserType.ADMIN) {
+      dispatch(
+        api.endpoints.startMeeting.initiate({
+          title: meetingTitle,
+          meetingId: roomName,
+        })
+      );
+      dispatch(setAsHost(true));
+    }
+
+    if (userType === UserType.STUDENT) {
+      dispatch(
+        api.endpoints.studentJoinMeeting.initiate({
+          meetingId: roomName,
+        })
+      );
+    }
+  }, [dispatch, meetingTitle, roomName, userType]);
 
   return (
     <div className="room-container">
       <RoomTopPanel />
       <div className="flex-col flex-col-center full-screen-height room-cam-and-bottom-panel">
-        <ParticipantsContainer/>
+        <ParticipantsContainer />
         <WebcamVideo />
         <RoomBottomPanel
           chatEnabled={chatEnabled}

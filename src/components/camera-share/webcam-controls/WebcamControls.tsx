@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  createNewAudioTrackForScreenshare,
   getLocalMediaStream,
-  getLocalMediaStreamObject,
   setLocalMediaStreamObject,
 } from "../../../lib/webrtc/setup-media-sources";
 import { setPlayingMediaStream } from "../../../state/slices/room";
@@ -15,6 +13,12 @@ import endCallIcon from "../../../assets/icons/end-call-icon-9.jpg";
 import { api } from "../../../state/queries/chatQueries";
 import { endCalls } from "../../../lib/sockets/socketListeners";
 import handleMicToggle from "../../../lib/presentation/handle-mic-toggle";
+import updateWebcamState from "../../../lib/media-controls/update-webcam";
+
+const initialSetupLocalMediaStream = async () => {
+  const stream = (await getLocalMediaStream(false, false, false)).mediaStream;
+  setLocalMediaStreamObject({ audio: true, mediaStream: stream, video: false, screenshare: false })
+}
 
 const WebcamControls: React.FC = () => {
   const isMicOn = useSelector((state: RootState) => state.room.isMicOn);
@@ -25,22 +29,19 @@ const WebcamControls: React.FC = () => {
   const displayingRemoteStream = useSelector(
     (state: RootState) => state.room.displayingRemoteStream
   );
-  
+
   const meetingId = useSelector((state: RootState) => state.auth.roomName);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    initialSetupLocalMediaStream();
+  }, []);
 
   /**
    * Toggle WebCam
    */
   async function handleClickWebcamButton() {
-    const mediaStreamData = await getLocalMediaStream(
-      !cameraOn,
-      isMicOn,
-      screenShareEnabled && !cameraOn // check here
-    );
-    setLocalMediaStreamObject(mediaStreamData, {
-      remoteVideo: displayingRemoteStream,
-    });
+    updateWebcamState(!cameraOn);
   }
 
   /**
@@ -50,34 +51,34 @@ const WebcamControls: React.FC = () => {
     if (screenShareEnabled && isMicOn) {
       // setPlayingMediaStreamObjectToNull();
 
-      const lmsObj = getLocalMediaStreamObject();
-      lmsObj?.removeTrack(lmsObj.getAudioTracks()[0]);
-      dispatch(
-        setPlayingMediaStream({
-          audio: false,
-          video: false,
-          screenshare: true,
-        })
-      );
+    //   const lmsObj = getLocalMediaStreamObject();
+    //   lmsObj?.removeTrack(lmsObj.getAudioTracks()[0]);
+    //   dispatch(
+    //     setPlayingMediaStream({
+    //       audio: false,
+    //       video: false,
+    //       screenshare: true,
+    //     })
+    //   );
 
-      // setLocalMediaStreamObject(lmsObj);
-    } else if (screenShareEnabled && !isMicOn) {
-      // setPlayingMediaStreamObjectToNull();
-      const lmsObj = getLocalMediaStreamObject();
+    //   // setLocalMediaStreamObject(lmsObj);
+    // } else if (screenShareEnabled && !isMicOn) {
+    //   // setPlayingMediaStreamObjectToNull();
+    //   const lmsObj = getLocalMediaStreamObject();
 
-      // create a new track
-      const audioTrack = await createNewAudioTrackForScreenshare();
+    //   // create a new track
+    //   const audioTrack = await createNewAudioTrackForScreenshare();
 
-      if (audioTrack) {
-        lmsObj?.addTrack(audioTrack);
-        dispatch(
-          setPlayingMediaStream({
-            audio: true,
-            video: false,
-            screenshare: true,
-          })
-        );
-      }
+    //   if (audioTrack) {
+    //     lmsObj?.addTrack(audioTrack);
+    //     dispatch(
+    //       setPlayingMediaStream({
+    //         audio: true,
+    //         video: false,
+    //         screenshare: true,
+    //       })
+    //     );
+    //   }
 
       // setLocalMediaStreamObject(lmsObj);
     } else {
@@ -151,7 +152,7 @@ const WebcamControls: React.FC = () => {
           <img src={screenshareIcon} alt="screen share icon" />
         </button>
         <button className="active-webcam-control end-meeting-button">
-          <img src={endCallIcon} alt="end meeting" onClick={() => endCalls()}/>{" "}
+          <img src={endCallIcon} alt="end meeting" onClick={() => endCalls()} />{" "}
         </button>
       </div>
     </div>

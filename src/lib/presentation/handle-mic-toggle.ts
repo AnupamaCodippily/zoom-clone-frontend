@@ -10,7 +10,7 @@ export default async function handleMicToggle(): Promise<void> {
   const roomState: RoomState = store.getState().room;
   const  { isCamOn, isHost, isMicOn, isScreenShared } = roomState;
   if (isHost) {
-    if (isHost) {
+    if (isMicOn) {
       turnHostMicOff();
     } else {
       turnHostMicOn();
