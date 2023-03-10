@@ -1,14 +1,9 @@
-import Peer from "peerjs";
-import room, { RoomState } from "../../state/slices/room";
+import Peer, { MediaConnection } from "peerjs";
 import { store } from "../../state/store";
 import Participant from "../../types/Participant";
 import { setCallsList } from "../sockets/socketListeners";
 import { getPeer } from "./create-peerjs-connection";
-import {
-  getLocalMediaStream,
-  getLocalMediaStreamObject,
-  setLocalMediaStreamObject,
-} from "./setup-media-sources";
+import { getLocalMediaStreamObject } from "./setup-media-sources";
 
 /**
  * When this user joins a meeting, the user needs to connect to all other peers in the meeting
@@ -34,7 +29,6 @@ const makeCallsToAllOtherParticipantsImpl = async (
   peer: Peer,
   stream?: MediaStream
 ) => {
-
   const isHost = store.getState().room.isHost;
   const isPresenter = store.getState().room.isMainPresenter;
 
@@ -42,13 +36,15 @@ const makeCallsToAllOtherParticipantsImpl = async (
 
   // const { isCamOn, isMicOn, isScreenShared } = roomState;
 
-  let mediaStream = stream ?? (await getLocalMediaStreamObject());
+  let mediaStream : MediaStream | null= stream ?? (await getLocalMediaStreamObject());
 
   console.log("I am sending this stream through a call:", mediaStream?.id);
 
   // debugger;
   if (mediaStream) {
     const callsList = [];
+
+    console.log( mediaStream.id + ' tracks ===> ', mediaStream.getTracks())
 
     for (const participant of participants) {
       if (

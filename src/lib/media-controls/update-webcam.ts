@@ -1,7 +1,9 @@
 import { RoomState, setPlayingMediaStream } from "../../state/slices/room";
 import { store } from "../../state/store";
 import {
+  getLocalMediaStream,
   getLocalMediaStreamObject,
+  setLocalMediaStreamObject,
   setMainPresentorMediaStream,
   updateLocalMediaStreamTracks,
 } from "../webrtc/setup-media-sources";
@@ -12,11 +14,20 @@ export default async function updateWebcamState(camera: boolean) {
 
   const { isMicOn, isHost, isMainPresenter, isScreenShared } = roomState;
 
-  const lmsObj = await getLocalMediaStreamObject();
-
+  const lmsObj = (await getLocalMediaStream(camera, isMicOn, isScreenShared))?.mediaStream;
+  setLocalMediaStreamObject({ audio: false, mediaStream: lmsObj, screenshare: isScreenShared, video: camera});
   if (lmsObj) {
-    updateLocalMediaStreamTracks(camera, isMicOn, isScreenShared);
 
+    if (isMainPresenter || isHost) {
+      setMainPresentorMediaStream(lmsObj);
+    }
+
+    updateLocalMediaStreamTracks(camera, isMicOn, isScreenShared);
+    
+    if (camera) {
+      updateRemoteMediaStreamTracks(true, isMicOn, isScreenShared);
+    }
+    
     store.dispatch(
       setPlayingMediaStream({
         audio: false,
@@ -24,13 +35,5 @@ export default async function updateWebcamState(camera: boolean) {
         video: camera,
       })
     );
-
-    if (camera) {
-      updateRemoteMediaStreamTracks(true, isMicOn, isScreenShared);
-    }
-
-    if (isMainPresenter || isHost) {
-      setMainPresentorMediaStream(lmsObj);
-    }
   }
 }

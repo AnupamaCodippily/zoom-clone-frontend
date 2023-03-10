@@ -34,7 +34,7 @@ const WebcamControls: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    initialSetupLocalMediaStream();
+    // initialSetupLocalMediaStream();/
   }, []);
 
   /**

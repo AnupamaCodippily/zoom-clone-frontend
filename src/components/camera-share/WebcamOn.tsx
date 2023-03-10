@@ -23,8 +23,8 @@ const WebcamOn = () => {
     if (videoRef?.current) {
       videoRef.current.srcObject = getMainPresentorMediaStream();
 
-      console.log(videoRef.current.srcObject)
-
+      console.log(videoRef.current?.srcObject?.getVideoTracks())
+      
       videoRef.current.play();
     }
   }, [localStreamSrc, isSelfMuted, isCamOn, isScreenShared, displayingRemoteStream, isHost]);

@@ -191,12 +191,12 @@ export async function updateLocalMediaStreamTracks(
       localMediaStream?.addTrack(localVideoTrack);
     }
   } else {
-    const videoTracks = localMediaStream?.getVideoTracks();
+    // const videoTracks = localMediaStream?.getVideoTracks();
 
-    if (videoTracks)
-      for (var i = 0; i < (videoTracks?.length ?? 0); i++) {
-        localMediaStream?.removeTrack(videoTracks[i]);
-      }
+    // if (videoTracks)
+    //   for (var i = 0; i < (videoTracks?.length ?? 0); i++) {
+    //     localMediaStream?.removeTrack(videoTracks[i]);
+    //   }
   }
 
   if (!(camera || audio || screenshare)) {

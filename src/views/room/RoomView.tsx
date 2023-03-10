@@ -7,7 +7,6 @@ import RoomBottomPanel from "../../components/room-bottom-panel/bottom-panel";
 import RoomSidePanel from "../../components/room-side-panel/RoomSidePanel";
 import RoomTopPanel from "../../components/room-top-panel/room-top-panel";
 import { UserType } from "../../lib/constants/user-types";
-import { updateRemoteMediaStreamTracks } from "../../lib/webrtc/update-media-tracks";
 import { api } from "../../state/queries/chatQueries";
 import { RoomState, setAsHost } from "../../state/slices/room";
 import { RootState } from "../../state/store";

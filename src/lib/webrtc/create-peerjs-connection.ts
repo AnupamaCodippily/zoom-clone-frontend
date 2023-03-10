@@ -24,20 +24,24 @@ export async function getPeer() {
     setCallsList(getCallsList().concat(call));
     console.log("call received");
 
+    console.log(call)
+    console.log(call.peerConnection)
+    console.log(call.peerConnection?.ontrack)
+
     const ownMediaStream: MediaStream | null =
       await getLocalMediaStreamObject();
 
     if (!ownMediaStream) return;
 
-	setTimeout(() => {
-		call.answer(ownMediaStream);
-		console.log("call answered with my media stream: " + ownMediaStream.id);
-	}, 4000)
+    setTimeout(() => {
+      call.answer(ownMediaStream);
+      console.log("call answered with my media stream: " + ownMediaStream.id);
+    }, 4000);
 
-	call.on('error', (err) => {
-		alert('call err')
-		console.log(err)
-	}) 
+    call.on("error", (err) => {
+      alert("call error");
+      console.log(err);
+    });
 
     call.on("stream", (stream: any) => {
       console.log("receive stream ", stream.id);
